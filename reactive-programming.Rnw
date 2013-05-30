@@ -1,0 +1,347 @@
+\documentclass[sts]{imsart}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{color}
+\usepackage{url}
+\usepackage[authoryear]{natbib}
+\usepackage[unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
+ breaklinks=false,pdfborder={0 0 1},backref=false,colorlinks=true]
+ {hyperref}
+\hypersetup{
+ citecolor=blue,urlcolor=blue}
+\usepackage{breakurl}
+
+\usepackage{xcolor}
+\newcommand{\hh}[1]{{\color{orange} #1}}
+
+\begin{document}
+
+<<setup, include=FALSE>>=
+options(replace.assign=TRUE, reindent.spaces=2)
+knit_hooks$set(document=hook_movecode, par = function(before, options, envir) {
+  if (before && options$fig.show != "none") {
+    par(mar = c(4, 4, 0.1, 0.1), cex.lab = 0.95, cex.axis = 0.9,
+        mgp = c(2, 0.7, 0), tcl = -0.3, las = 1)
+    if (is.list(options$par)) do.call(par, options$par)
+  }
+})
+set.seed(123)
+@
+
+\begin{frontmatter}
+
+
+\title{Reactive Programming for Interactive Graphics}
+
+\maketitle
+\runtitle{Reactive Programming for Interactive Graphics}
+
+\begin{aug}
+\author{Yihui Xie\ead[label=e1]{xie@iastate.edu}\ead[label=u1,url]{http://yihui.name}}
+\and
+\author{Heike Hofmann \ead[label=e2]{hofmann@iastate.edu}\ead[label=u2,url]{http://hofmann.public.iastate.edu}}
+\affiliation{Department of Statistics, Iowa State University}
+\address{Yihui Xie is Graduate Student, Department of Statistics, Iowa State University, 2215 Snedecor Hall, Ames 50011, IA, USA \printead{e1,u1}}
+\address{Heike Hofmann is Associate Professor, Department of Statistics, Iowa State University, 2413 Snedecor Hall, Ames 50011, IA, USA \printead{e2,u2}}
+\runauthor{Xie and Hofmann}
+\end{aug}
+\begin{abstract}
+One of the big challenges of developing interactive statistical applications is the management of the data pipeline, which typically consists of many modules. The user's interactions needs to be propagated through these modules and finally be reflected in the output representation. Each individual module may be easy to develop and manage, but the dependency structure can be quite challenging. The MVC (Model/View/Controller) pattern is an attempt to solve the problem by separating the user's interaction from the representation of the data. In this paper we discuss the paradigm of {\it reactive programming} in the framework of the MVC architecture and show its applicability to interactive graphics. Under this paradigm, developers  benefit from the separation of user interaction from the graphical representation, which makes it easier for users and developers to extend interactive applications. The implementation is done in the R package \textbf{cranvas}, which is freely available on Github.
+\end{abstract}
+
+\begin{keyword}
+\kwd{Reactive programming}
+\kwd{Interactive graphics}
+\kwd{R language}
+\end{keyword}
+\end{frontmatter}
+
+
+\section{Introduction}
+\hh{This needs a gentler introduction -- }
+\hh{
+Start with a discussion of interactive graphics -- where does it come from, }
+
+\hh{What are the main tasks that our system is supposed to allow?}
+
+\hh{Single display interactions: 
+changes to the scale/resolution: zooming, panning, 
+additional information: querying}
+
+\hh{Linking between displays}
+
+The first set of tasks is easier to solve - there are a lot of web applications that allow various single display interactions (Gapminder, ManyEyes, lots of d3 examples), and that's what people usually associate with interactive graphics.
+
+Linked graphics is more tricky - it allows changes across different displays as well as across different aggregation levels of the data. \hh{example}
+
+
+
+A number of standalone systems for interactive statistical graphics
+exist. 
+\hh{Put in a bit more information  for each: prim9 should go there as well}
+xgobi and GGobi \citep{swayne2003,cook07}, MANET \citep{unwin96}
+and Mondrian \citep{theus02}, which support interactive displays
+of multivariate data, but they lack the extensibility, and tight integration
+with modeling that R furnishes.
+
+One of the big challenges in the development of interactive statistical applications is to resolve a user's action on the data level. THis is sometimes referred to as the `plumbing' of interactice graphics. 
+\hh{Look up Andreas Buja's paper: “Elements of a Viewing Pipeline for Data Analysis,” Buja, A., Asimov, D., Hurley, C.B., and McDonald, J.A., in: Dynamic Graphics for Statistics, W.S. Cleveland, M.E. McGill (eds.), Wadsworth, Statistics/Probability Series, 277–297 (1988).}
+\hh{Cite Andreas', Hadley's and Michael's plumbing papers and summarize in one sentence each.}
+
+The Model/View/Controller (MVC) triple is a software architecture pattern
+first described by \citet{Krasner1988}. It is widely used in GUI
+(Graphical User Interface) applications, including web applications
+\citep{leff2001web}. The main reason for its popularity is because
+it minimizes the dependencies between  different components of an application.
+
+For example, let us assume that the model component consists of a data transformation, such as a square-root or log transformation. The model does not depend on the view, but the view depends on the model in the sense, that if the data is changed or a different data transformation is chosen, the view has to be updated to reflect this change.
+%For example, the model component can be data transformation, and it
+%does not need to depend on the view -- the view depends on the model
+%in the sense that when the data is changed (e.g. from square-root
+%transformation to log transformation), the view will reflect the change.
+The model developer therefore never needs to deal with the representation of
+the data on the screen, as that is only the  task of the view.
+
+In a traditional MVC design, the controller sends commands to both
+the model and the view to update their states. Below is a minimal
+example on how to brush a scatterplot under the MVC design implemented
+in R \citep{R2013}:
+
+\hh{I wouldn't call what is done 'brushing' - to me, brushing has a graphical component that I am completely missing in this setting. What is shown is 'highlighting'. Could you try to re-phrase the example?}
+
+<<mvc-example>>=
+brushed = logical(nrow(cars)) # status of the brush indices
+model = function(i) {
+  brushed[] <<- FALSE
+  # set the i-th element of the brush to TRUE
+  brushed[i] <<- TRUE
+}
+view = function(b = brushed) {
+  # solid points (19) for b == TRUE, and circles (21) for FALSE
+  plot(cars, pch = ifelse(b, 19, 21))
+}
+controller = function(i) {
+  # update the model and then the view
+  model(i)
+  view()
+}
+@
+
+When the user brushes the scatterplot, we can obtain the indices of
+the points under the brush rectangle (denoted by \texttt{i} in the
+code above). Then we pass the indices to the model to change the brush
+status (the vector \texttt{brushed}) and redraw the plot. Below we
+brush the first point and then points from the 10th to 30th. Normally
+we get the indices of points from the mouse input, and here is only
+an emulation.
+
+\begin{figure}
+<<mvc-brush, fig.width=3.5, fig.height=3.5, fig.show='hold', out.width='.49\\linewidth', par=TRUE, dev='tikz', cache=TRUE>>=
+controller(1)  # the first point
+controller(10:30)  # points from 10th to 30th
+@
+
+\caption{Brush a scatterplot using the MVC design: brush the first point (left),
+then brush all points from the 10th to 30th. The \texttt{cars} data
+is a built-in dataset in R.\label{fig:mvc-brush}}
+\end{figure}
+
+
+By decoupling the system into three components, we can reuse them
+in other places in the implementation. For example, we can call the model or the view separately
+without modifying their source code.
+
+The problem with the traditional MVC design is that we have to be
+explicit about updating the model and the view in the controller.
+In the context of interactive graphics, this can be a burden for developers.
+For instance, when there are multiple views in the system, the controller
+must notify all views explicitly of all of the changes in the system. When a
+new view is added to the system, the  controller
+must be updated accordingly.
+
+Ideally we want all views to respond to changes in the model automatically
+so there is no additional step of updating the views after the model
+is changed. This can be achieved by reactive programming, a programming
+paradigm targeted at the propagation of changes in data flows \hh{citation?}.
+\hh{Reactive programming is an object-oriented programming approach that is based on an event-listener model. } We
+attach listeners on data objects such that (different) events will be triggered
+corresponding to changes in data. 
+In the above example, the plot will be
+updated as soon as object \texttt{brushed}} is modified without the need to explicitly calling
+\texttt{view()}. This makes it much easier to express the logic of
+interactive graphics. 
+
+\hh{Need to come back to this}
+In this paper we will discuss how it works as
+well its application in interactive graphics.
+
+
+\section{Related work}
+
+
+\citet{Whalen05} built an interactive GUI using the MVC pattern to
+explore linked data. The GUI was based on the RGtk package (later
+evolved into RGtk2 \citep{RGtk2}), and MVC was implemented in the
+MVCClass package. \emph{TODO}: need to figure out how she implemented
+signals \url{http://www.bioconductor.org/packages/2.11/bioc/html/MVCClass.html}
+
+The iplots package \citep{R-iplots}
+
+
+\section{Reactive programming}
+
+Our goal is to automatically notify the view whenever there is a change
+in the model. For an application of interactive graphics, there are
+two types of objects in the model:
+\begin{itemize}
+\item  data to present in the plots; it is often of a tabular form like
+the data frame in R
+\item  meta data to store additional information of the plots such as
+the axis limits; it is irregular like a list
+\end{itemize}
+There are two approaches to making them reactive, respectively. We
+can use \emph{mutaframes} \citep{R-plumbr} for the data object, and
+\emph{reference classes} \citep{Chambers2013} for the meta data.
+The fundamental technique underlying them is the \emph{active binding}
+in R, thanks to the work of the R core member Luke Tierney.
+
+Active bindings allow events (expressed as functions) to be attached
+on objects and these events are executed when objects are assigned
+new values. Below is an implementation with active bindings, to continue
+the MVC example before:
+
+<<active-binding>>=
+reactiveModel = local({
+  b = logical(nrow(cars)) # initial status; all FALSE
+  function(i) {
+    if (!missing(i)) {
+      b[] <<- FALSE
+      b[i] <<- TRUE # change i-th elements to TRUE
+      view(b) # update the view automatically
+    }
+    b
+  }
+})
+makeActiveBinding('reactiveBrushed', reactiveModel, env = globalenv())
+@
+
+We bind a function \texttt{reactiveModel()} to the variable \texttt{reactiveBrushed}
+via \texttt{makeActiveBinding()} in base R. When we assign new values
+to \texttt{reactiveBrushed}, the function defined in \texttt{reactiveModel()}
+will be called: inside the function, the logical variable \texttt{b}
+is modified by the indices \texttt{i} and the view is updated accordingly.
+The two lines below achieve the same goal as the MVC example in Figure
+\ref{fig:mvc-brush}.
+
+<<active-test, eval=FALSE>>=
+reactiveBrushed=1 # brush the first point
+reactiveBrushed=10:30 # brush points from 10th to 30th
+@
+
+Now our only task is to assign indices of the brushed points to \texttt{reactiveBrushed},
+since the plot will be updated automatically. A real interactive graphics
+system is more complicated that the above toy example, but it shows
+the foundation of the pipeline. There are two kinds of interactive
+objects in cranvas, as explained in the next two sections.
+
+
+\subsection{Mutaframes}
+
+A mutaframe is basically a mutable data frame, meaning that it can
+be modified anywhere regardless of the current environment. By comparison,
+a data frame can only be modified in the environment in which it was
+created, unless we use the non-local assignment operator \texttt{<\textcompwordmark{}<-}.
+The difference is highlighted in the example below:
+
+<<mf-mutable,package=library(methods)>>=
+library(plumbr)
+mf = mutaframe(x=1:2*pi) # a mutaframe
+df = data.frame(x=1:2*pi) # a normal data frame
+c(mf$x[2], df$x[2]) # the 2nd elements in mf and df
+f=function() {
+mf$x[2]=10
+df$x[2]=10
+}
+f() # modified mf, but not df
+c(mf$x[2], df$x[2])
+@
+
+As we can see, \texttt{mf} can be modified inside \texttt{f()}, but
+\texttt{df} cannot, therefore we can share the same mutaframe across
+multiple plots. Another important feature of mutaframes is that we
+can attach listeners onto them. A listener is essentially an R function
+which is called upon changes in the mutaframe. For interactive graphics,
+we can update the views with listeners. Below we create a mutaframe
+and attach a listener to it to redraw the scatterplot:
+
+<<mf-listener>>=
+mf = mutaframe(cars)
+add_listener(mf, function(i, j) {
+  plot(mf$speed, mf$dist)
+})
+@
+
+Now whenever we update \texttt{mf}, the scatterplot will be updated
+accordingly. For example, we make a square-root transformation of
+the \texttt{dist} variable:
+
+<<sqrt-dist, eval=FALSE>>=
+mf$dist = sqrt(mf$dist)
+@
+
+
+\subsection{Reference classes}
+
+R introduced reference classes since version 2.12 thanks to John Chambers.
+
+extension by objectSignals
+
+
+\section{Application}
+
+
+\subsection{Zooming and panning}
+
+it is really meta\$limits
+
+
+\subsection{Brushing and deleting}
+
+manipulate data instead of the plot directly
+
+selection mode
+
+
+\subsection{Querying}
+
+record selector
+
+
+\subsection{Linking}
+
+One-to-one linking, categorical linking (application: maps and other
+plots), kNN linking
+
+
+\subsection{Meta data}
+
+store additional information about the data and respond to changes
+
+customization
+
+
+\subsection{Tour}
+
+mutaframe
+
+
+\section{Conclusions}
+
+JS libraries
+
+\bibliographystyle{imsart-nameyear}
+\bibliography{reactive-programming,R-packages,phd-thesis-yihui-xie,/part-i}
+
+
+\end{document}
