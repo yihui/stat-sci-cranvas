@@ -297,11 +297,32 @@ extension by objectSignals
 
 
 \section{Application}
+Interaction happens on multiple levels. The most common forms of interaction with a display are listed below in decreasing order of immediacy with which this interaction between the user and the display happens:
+\begin{itemize}
+\item {\bf Direct manipulation} of graphical objects \citep{cleveland, wills} is at the heart of interactive graphics.  Direct manipulation is what we use only for the highest level of interaction, such as selection or brushing of elements. With a set of different modes (querying, scaling mode as e.g. implemented in xgobi, ggobi \citet{ggobi}) a set of different or additional interactions can be incorporated at the highest level. Another approach is to make use of visual cues \cite{manet, mondrian}, which make areas of interactions visible to the user by changing the cursor upon entering the cue area. Visual cues are usually associated with changes to the resolution of a representation or scales of a display.
+\item {\bf Input devices}: most input devices, such as mice or touch pads, allow a finer level of interaction than just click-selection; e.g. all operating platforms and devices specify wheel events (either through the presence of a mouse wheel, a mouse move with additional modifier key, or a touch gesture).  
+\item {\bf Keystrokes} can be used for quick access to functions that are also accessible through a (popup) menu or other toolbar. 
+\item {\bf Functional access} through the console: Accessor functions allow us to get information about the state of  objects (e.g. get selected elements). Mutator functions enable the user to set a particular state for objects in a display (e.g. set highlighting color to red, set points to size 5).
+\end{itemize}
+
+\begin{figure}
+\includegraphics[width=\textwidth]{images/histogram}
+\caption{\label{hist}Histogram of sales prices. Sales of \$200k and more are selected and highlighted in yellow. Markers show cue regions. }
+\end{figure}
+\begin{figure}
+\centering
+\includegraphics[height=0.55\textwidth]{images/bar}
+\includegraphics[height=0.55\textwidth]{images/spine}
+\caption{\label{bar} Barchart (left) and spineplot (right) of the number of bedrooms in housing sales. Highlighted are sales of \$200k and higher. Querying gives details on each bin (houses with a particular number of bedrooms) and the selected houses with this bin.}
+\end{figure}
+
+On the developer's side, the main idea behind resolving an interaction between the user and the display, is to actually resolve the interaction at the level of the data, but make it appear as if the user had directly interacted with the graphical object. 
 
 
 \subsection{Zooming and panning}
 
 it is really meta\$limits
+
 
 
 \subsection{Brushing and deleting}
@@ -313,8 +334,9 @@ selection mode
 
 \subsection{Querying}
 
-record selector
+record selector 
 
+Querying information is context-sensitive 
 
 \subsection{Linking}
 
