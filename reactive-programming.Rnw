@@ -131,14 +131,14 @@ When the user brushes the scatterplot, we can obtain the indices of
 the points under the brush rectangle (denoted by \texttt{i} in the
 code above). Then we pass the indices to the model to change the brush
 status (the vector \texttt{brushed}) and redraw the plot. Below we
-brush the first point and then points from the 10th to 30th. Normally
+brush the first four points and then points from the 10th to 28th. Normally
 we get the indices of points from the mouse input, and here is only
 an emulation.
 
 \begin{figure}
 <<mvc-brush, fig.width=3.5, fig.height=3.5, fig.show='hold', out.width='.49\\linewidth', par=TRUE, dev='tikz', cache=TRUE>>=
-controller(1)  # the first point
-controller(10:30)  # points from 10th to 30th
+controller(1:4)  # the first four point
+controller(10:28)  # points from 10th to 28th
 @
 
 \caption{Brush a scatterplot using the MVC design: brush the first point (left),
@@ -234,8 +234,8 @@ The two lines below achieve the same goal as the MVC example in Figure
 \ref{fig:mvc-brush}.
 
 <<active-test, eval=FALSE>>=
-reactiveBrushed=1 # brush the first point
-reactiveBrushed=10:30 # brush points from 10th to 30th
+reactiveBrushed=1:4 # brush the first four points
+reactiveBrushed=10:28 # brush points from 10th to 28th
 @
 
 Now our only task is to assign indices of the brushed points to \texttt{reactiveBrushed},
