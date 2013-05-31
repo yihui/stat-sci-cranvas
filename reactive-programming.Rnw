@@ -10,10 +10,8 @@
  {hyperref}
 \hypersetup{
  citecolor=blue,urlcolor=blue}
-\usepackage{breakurl}
 
-\usepackage{xcolor}
-\newcommand{\hh}[1]{{\color{orange} #1}}
+\newcommand{\hh}[1]{{\color{magenta} #1}}
 
 \begin{document}
 
