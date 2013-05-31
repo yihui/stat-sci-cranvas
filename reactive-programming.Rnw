@@ -106,8 +106,6 @@ the model and the view to update their states. Below is a minimal
 example on how to brush a scatterplot under the MVC design implemented
 in R \citep{R2013}:
 
-\hh{I wouldn't call what is done 'brushing' - to me, brushing has a graphical component that I am completely missing in this setting. What is shown is 'highlighting'. Could you try to re-phrase the example?}
-
 <<mvc-example>>=
 brushed = logical(nrow(cars)) # status of the brush indices
 model = function(i) {
@@ -116,8 +114,10 @@ model = function(i) {
   brushed[i] <<- TRUE
 }
 view = function(b = brushed) {
+  d = cars
   # solid points (19) for b == TRUE, and circles (21) for FALSE
-  plot(cars, pch = ifelse(b, 19, 21))
+  plot(d, pch = ifelse(b, 19, 21))
+  rect(min(d[b, 1]), min(d[b, 2]), max(d[b, 1]), max(d[b, 2]), lty=2)
 }
 controller = function(i) {
   # update the model and then the view
