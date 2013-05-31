@@ -166,7 +166,7 @@ paradigm targeted at the propagation of changes in data flows \hh{citation?}.
 attach listeners on data objects such that (different) events will be triggered
 corresponding to changes in data. 
 In the above example, the plot will be
-updated as soon as object \texttt{brushed}} is modified without the need to explicitly calling
+updated as soon as object \texttt{brushed} is modified without the need to explicitly calling
 \texttt{view()}. This makes it much easier to express the logic of
 interactive graphics. 
 
