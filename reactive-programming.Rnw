@@ -10,8 +10,10 @@
  {hyperref}
 \hypersetup{
  citecolor=blue,urlcolor=blue}
+\usepackage{breakurl}
 
-\newcommand{\hh}[1]{{\color{magenta} #1}}
+\usepackage{xcolor}
+\newcommand{\hh}[1]{{\color{orange} #1}}
 
 \begin{document}
 
@@ -106,6 +108,8 @@ the model and the view to update their states. Below is a minimal
 example on how to brush a scatterplot under the MVC design implemented
 in R \citep{R2013}:
 
+\hh{I wouldn't call what is done 'brushing' - to me, brushing has a graphical component that I am completely missing in this setting. What is shown is 'highlighting'. Could you try to re-phrase the example?}
+
 <<mvc-example>>=
 brushed = logical(nrow(cars)) # status of the brush indices
 model = function(i) {
@@ -114,10 +118,8 @@ model = function(i) {
   brushed[i] <<- TRUE
 }
 view = function(b = brushed) {
-  d = cars
   # solid points (19) for b == TRUE, and circles (21) for FALSE
-  plot(d, pch = ifelse(b, 19, 21))
-  rect(min(d[b, 1]), min(d[b, 2]), max(d[b, 1]), max(d[b, 2]), lty=2)
+  plot(cars, pch = ifelse(b, 19, 21))
 }
 controller = function(i) {
   # update the model and then the view
@@ -166,7 +168,7 @@ paradigm targeted at the propagation of changes in data flows \hh{citation?}.
 attach listeners on data objects such that (different) events will be triggered
 corresponding to changes in data. 
 In the above example, the plot will be
-updated as soon as object \texttt{brushed} is modified without the need to explicitly calling
+updated as soon as object \texttt{brushed}} is modified without the need to explicitly calling
 \texttt{view()}. This makes it much easier to express the logic of
 interactive graphics. 
 
@@ -298,12 +300,12 @@ extension by objectSignals
 
 \section{Application}
 Interaction happens on multiple levels. The most common forms of interaction with a display are listed below in decreasing order of immediacy with which this interaction between the user and the display happens:
-\begin{itemize}
-\item {\bf Direct manipulation} of graphical objects \citep{cleveland, wills} is at the heart of interactive graphics.  Direct manipulation is what we use only for the highest level of interaction, such as selection or brushing of elements. With a set of different modes (querying, scaling mode as e.g. implemented in xgobi, ggobi \citet{ggobi}) a set of different or additional interactions can be incorporated at the highest level. Another approach is to make use of visual cues \cite{manet, mondrian}, which make areas of interactions visible to the user by changing the cursor upon entering the cue area. Visual cues are usually associated with changes to the resolution of a representation or scales of a display.
-\item {\bf Input devices}: most input devices, such as mice or touch pads, allow a finer level of interaction than just click-selection; e.g. all operating platforms and devices specify wheel events (either through the presence of a mouse wheel, a mouse move with additional modifier key, or a touch gesture).  
-\item {\bf Keystrokes} can be used for quick access to functions that are also accessible through a (popup) menu or other toolbar. 
-\item {\bf Functional access} through the console: Accessor functions allow us to get information about the state of  objects (e.g. get selected elements). Mutator functions enable the user to set a particular state for objects in a display (e.g. set highlighting color to red, set points to size 5).
-\end{itemize}
+\begin{description}
+\item [\bf Direct manipulation] of graphical objects \citep{cleveland, wills} is at the heart of interactive graphics.  Direct manipulation is what we use only for the highest level of interaction, such as selection or brushing of elements. With a set of different modes (querying, scaling mode as e.g. implemented in xgobi, ggobi \citet{ggobi}) a set of different or additional interactions can be incorporated at the highest level. Another approach is to make use of visual cues \cite{manet, mondrian}, which make areas of interactions visible to the user by changing the cursor upon entering the cue area. Visual cues are usually associated with changes to the resolution of a representation or scales of a display.
+\item [{\bf Input devices}:] most input devices, such as mice or touch pads, allow a finer level of interaction than just click-selection; e.g. all operating platforms and devices specify wheel events (either through the presence of a mouse wheel, a mouse move with additional modifier key, or a touch gesture).  
+\item [\bf Keystrokes] can be used for quick access to functions that are also accessible through a (popup) menu or other toolbar. 
+\item [\bf Functional access] through the console: Accessor functions allow us to get information about the state of  objects (e.g. get selected elements). Mutator functions enable the user to set a particular state for objects in a display (e.g. set highlighting color to red, set points to size 5).
+\end{description}
 
 \begin{figure}
 \includegraphics[width=\textwidth]{images/histogram}
@@ -317,38 +319,36 @@ Interaction happens on multiple levels. The most common forms of interaction wit
 \end{figure}
 
 On the developer's side, the main idea behind resolving an interaction between the user and the display, is to actually resolve the interaction at the level of the data, but make it appear as if the user had directly interacted with the graphical object. 
+%
+\subsection{Meta data}
+Graphical displays are data summaries, and as such they require some level of aggregation of the original data. This information is stored in form of meta data. Meta data is plot specific. Not only are data values stored to render a display, but also the parameters necessary to derive the data values for the display. 
+It is those meta data that correspond directly to the graphical elements shown, and with which the user interacts. For resolving the interaction, the aggregation from the original data has to be reversed. Interactions are therefore only feasible in situations that can be reversed. A higher level of aggregation in a display usually requires a more complex data structure for an interaction.
 
-
-\subsection{Zooming and panning}
-
-it is really meta\$limits
-
-
-
-\subsection{Brushing and deleting}
-
-manipulate data instead of the plot directly
-
-selection mode
-
-
-\subsection{Querying}
-
-record selector 
-
-Querying information is context-sensitive 
+{\tt cranvas} allows the possibility of adding user customized meta information to any display.
 
 \subsection{Linking}
-
 One-to-one linking, categorical linking (application: maps and other
 plots), kNN linking
 
+\subsection{Interactions}
 
-\subsection{Meta data}
+The list below shows a set of interactions ordered depending on the level at which it can be resolved: 
+\begin{description}
+\item[{\bf Zooming and panning}:] are direct interactions with the display, that can be resolved directly without the need of interaction with the original data. In {\tt cranvas}, the core of zooming and panning consists of simple changes to {\tt meta\$limits}.
+\item[\bf Querying] is another interaction that usually can be resolved without any further information from the original data. Querying of graphical objects involves, in a first step the display of the corresponding values of the meta data. In the case of the barcharts in figure \ref{bar}, querying of the bins displays information, about the bin's level, the number of records it encompasses, as well as the proportion of the whole data that this bin contains. The same information is also displayed at the level of the selected values in the bar. The proportion shown is the proportion of selected elements within the bin. 
 
-store additional information about the data and respond to changes
+\item[{\bf Brushing, Querying, and Selection}:]  are all (mode-dependent) interactions that require backtracking of one step of aggregation; the histogram of figure~\ref{hist} shows sales prices of all houses sold in Ames, IA from 2008 to 2012. The yellow rectangle corresponds to an an area based selection of all houses with sales of \$200k or more, that triggers a highlighting of all corresponding houses in all displays of the Ames housing data. This includes the histogram itself, where all bins intersecting with the selection rectangle are filled with highlighting color, and all barcharts of the number of bedrooms as shown in figure~\ref{bar}.
 
-customization
+Internally, this selection is handled with one step of backtracking:
+Once the user draws a selection rectangle, metadata of all graphical objects intersecting with it is investigated. In the case of a histogram, bins are the graphical objects intersecting with a selection rectangle. Corresponding to each bin, meta information is available. This information contains lower and upper limits of an interval on the scale of the variable  and the number of records in the original data with values within those limits. The backtracking corresponds to identifying all records in the original data falling within the limits of the selected bin. The original data contains an internal binary variable {\tt .brushed} encoding selection status of a record. When this status is changed, the change is propagated to all dependencies, which results in an update to all affected views. In the situation of the histogram, a selection corresponds to an update of the {\tt .brushed} variable, which in turn informs all linked views of an update of the highlighting status. One of the dependent views is the histogram itself, which shows highlighting in form of superimposing a histogram of the highlighted records on top of the original histogram. What the user perceives as `selecting' bins is actually a reaction to a change in the internal brushing variable.
+
+\item[{\bf Interactions with graphical objects}]: 
+visual cues indicate additional areas of interaction in graphical objects other than the ones representing the data. Figure~\ref{hist} shows several examples of visual cues in a histogram. 
+Both anchor point and bin width are graphical representations of plotting parameters for the histogram. The anchor of a histogram is the lower limit of the left most bin. The bin width then defines the interval at which breaks are drawn to define bins. 
+Interactions with both anchor and binwidth cues consist of horizontal shifts, which re-set the actual values parametrizing the histogram. Changes to the anchor allow to test for instabilities in the display due to discreteness in the data.  Binwidth changes show the data at different levels of smoothness and therefore allow for a visualization of `big' picture marginal distributions for large bin widths and the investigation of small pattern features, such as multiple modes and gaps in the data for small bin widths. 
+
+\end{description}
+
 
 
 \subsection{Tour}
@@ -361,7 +361,7 @@ mutaframe
 JS libraries
 
 \bibliographystyle{imsart-nameyear}
-\bibliography{reactive-programming}
+\bibliography{reactive-programming,R-packages,phd-thesis-yihui-xie,/part-i}
 
 
 \end{document}
