@@ -2,3 +2,5 @@ cache/
 figure/
 *-tikzDictionary
 reactive-programming.pdf
+*.log
+*.bbl
