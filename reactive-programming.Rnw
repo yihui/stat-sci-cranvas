@@ -339,7 +339,7 @@ mutaframe
 JS libraries
 
 \bibliographystyle{imsart-nameyear}
-\bibliography{reactive-programming,R-packages,phd-thesis-yihui-xie,/part-i}
+\bibliography{reactive-programming,R-packages,phd-thesis-yihui-xie,part-i}
 
 
 \end{document}
