@@ -330,6 +330,22 @@ It is those meta data that correspond directly to the graphical elements shown, 
 One-to-one linking, categorical linking (application: maps and other
 plots), kNN linking
 
+\begin{figure}
+% \includegraphics[width=0.3\textwidth]{images/map-0}
+% \includegraphics[width=0.3\textwidth]{images/map-1}
+% \includegraphics[width=0.3\textwidth]{images/map-2}
+% \includegraphics[width=0.3\textwidth]{images/map-5}
+% \includegraphics[width=0.3\textwidth]{images/map-4}
+% \includegraphics[width=0.3\textwidth]{images/map-3}
+% \includegraphics[width=0.3\textwidth]{images/map-6}
+% %\includegraphics[width=0.3\textwidth]{images/map-7}
+% \includegraphics[width=0.3\textwidth]{images/map-8}
+% %\includegraphics[width=0.3\textwidth]{images/map-9}
+% \includegraphics[width=0.3\textwidth]{images/map-10}
+\includegraphics[width=\textwidth]{images/map-all.pdf}
+\caption{\label{cartogram} Morph from a choropleth chart of the US (top left) to a population based cartogram (bottom right). The color represents electoral votes of states towards the Democratic (blue) or Republican party (red) in the 2012 Presidential election.}
+\end{figure}
+
 \subsection{Interactions}
 
 The list below shows a set of interactions ordered depending on the level at which it can be resolved: 
