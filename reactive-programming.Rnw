@@ -316,9 +316,9 @@ extension by objectSignals
 \section{Application}
 Interaction happens on multiple levels. The most common forms of interaction with a display are listed below in decreasing order of immediacy with which this interaction between the user and the display happens:
 \begin{description}
-\item [\bf Direct manipulation] of graphical objects \citep{cleveland, wills} is at the heart of interactive graphics.  Direct manipulation is what we use only for the highest level of interaction, such as selection or brushing of elements. With a set of different modes (querying, scaling mode as e.g. implemented in xgobi, ggobi \citet{ggobi}) a set of different or additional interactions can be incorporated at the highest level. Another approach is to make use of visual cues \cite{manet, mondrian}, which make areas of interactions visible to the user by changing the cursor upon entering the cue area. Visual cues are usually associated with changes to the resolution of a representation or scales of a display.
+\item [\bf Direct manipulation] of graphical objects \citep{cleveland, wills} is at the heart of interactive graphics.  Direct manipulation is what we use only for the highest level of interaction, such as selection or brushing of elements. With a set of different modes (querying, scaling mode as e.g. implemented in xgobi, ggobi \citet{ggobi}) a set of different or additional interactions can be incorporated at the highest level. Another approach is to make use of visual cues \cite{manet, mondrian}, which make areas of interactions visible to the user by changing the cursor upon entering the cue area. Visual cues are usually associated with changes to the resolution of a representation or scales of a display. 
 \item [{\bf Input devices}:] most input devices, such as mice or touch pads, allow a finer level of interaction than just click-selection; e.g. all operating platforms and devices specify wheel events (either through the presence of a mouse wheel, a mouse move with additional modifier key, or a touch gesture).  
-\item [\bf Keystrokes] can be used for quick access to functions that are also accessible through a (popup) menu or other toolbar. 
+\item [\bf Keystrokes] can be used for quick access to functions that are also accessible through a (popup) menu or other toolbar. Figure~\ref{map-all} shows an example of a key stroke interaction (arrow keys left and right) to move between a choropleth map of the United States and a population based cartogram. 
 \item [\bf Functional access] through the console: Accessor functions allow us to get information about the state of  objects (e.g. get selected elements). Mutator functions enable the user to set a particular state for objects in a display (e.g. set highlighting color to red, set points to size 5).
 \end{description}
 
@@ -335,15 +335,6 @@ Interaction happens on multiple levels. The most common forms of interaction wit
 
 On the developer's side, the main idea behind resolving an interaction between the user and the display, is to actually resolve the interaction at the level of the data, but make it appear as if the user had directly interacted with the graphical object. 
 %
-\subsection{Meta data}
-Graphical displays are data summaries, and as such they require some level of aggregation of the original data. This information is stored in form of meta data. Meta data is plot specific. Not only are data values stored to render a display, but also the parameters necessary to derive the data values for the display. 
-It is those meta data that correspond directly to the graphical elements shown, and with which the user interacts. For resolving the interaction, the aggregation from the original data has to be reversed. Interactions are therefore only feasible in situations that can be reversed. A higher level of aggregation in a display usually requires a more complex data structure for an interaction.
-
-{\tt cranvas} allows the possibility of adding user customized meta information to any display.
-
-\subsection{Linking}
-One-to-one linking, categorical linking (application: maps and other
-plots), kNN linking
 
 \begin{figure}
 % \includegraphics[width=0.3\textwidth]{images/map-0}
@@ -358,8 +349,19 @@ plots), kNN linking
 % %\includegraphics[width=0.3\textwidth]{images/map-9}
 % \includegraphics[width=0.3\textwidth]{images/map-10}
 \includegraphics[width=\textwidth]{images/map-all.pdf}
-\caption{\label{cartogram} Morph from a choropleth chart of the US (top left) to a population based cartogram (bottom right). The color represents electoral votes of states towards the Democratic (blue) or Republican party (red) in the 2012 Presidential election.}
+\caption{\label{cartogram} Morph from a choropleth chart of the US (top left) to a population based cartogram (bottom right). The color represents electoral votes of states towards the Democratic (blue) or Republican party (red) in the 2012 Presidential election. The arrow indicates  the direction of the morph.  }
 \end{figure}
+
+\subsection{Meta data}
+Graphical displays are data summaries, and as such they require some level of aggregation of the original data. This information is stored in form of meta data. Meta data is plot specific. Not only are data values stored to render a display, but also the parameters necessary to derive the data values for the display. 
+It is those meta data that correspond directly to the graphical elements shown, and with which the user interacts. For resolving the interaction, the aggregation from the original data has to be reversed. Interactions are therefore only feasible in situations that can be reversed. A higher level of aggregation in a display usually requires a more complex data structure for an interaction.
+
+{\tt cranvas} allows the possibility of adding user customized meta information to any display.
+
+\subsection{Linking}
+One-to-one linking, categorical linking (application: maps and other
+plots), kNN linking
+
 
 \subsection{Interactions}
 
@@ -376,8 +378,7 @@ Once the user draws a selection rectangle, metadata of all graphical objects int
 \item[{\bf Interactions with graphical objects}]: 
 visual cues indicate additional areas of interaction in graphical objects other than the ones representing the data. Figure~\ref{hist} shows several examples of visual cues in a histogram. 
 Both anchor point and bin width are graphical representations of plotting parameters for the histogram. The anchor of a histogram is the lower limit of the left most bin. The bin width then defines the interval at which breaks are drawn to define bins. 
-Interactions with both anchor and binwidth cues consist of horizontal shifts, which re-set the actual values parametrizing the histogram. Changes to the anchor allow to test for instabilities in the display due to discreteness in the data.  Binwidth changes show the data at different levels of smoothness and therefore allow for a visualization of `big' picture marginal distributions for large bin widths and the investigation of small pattern features, such as multiple modes and gaps in the data for small bin widths. 
-
+Interactions with both anchor and binwidth cues consist of horizontal shifts, which re-set the actual values parametrizing the histogram. Changes to the anchor allow to test for instabilities in the display due to discreteness in the data.  Binwidth changes show the data at different levels of smoothness and therefore allow for a visualization of `big' picture marginal distributions for large bin widths and the investigation of small pattern features, such as multiple modes and gaps in the data for small bin widths. Examples for both of these interactions are available as movies in the supplementary material.
 \end{description}
 
 
@@ -391,6 +392,8 @@ mutaframe
 
 JS libraries
 
+\section*{Supplementary material}
+Movies showing some interactions are available through \hh{What would be a good placefor these movies?}
 \bibliographystyle{imsart-nameyear}
 \bibliography{reactive-programming}
 
