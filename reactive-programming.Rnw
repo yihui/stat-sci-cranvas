@@ -263,9 +263,7 @@ objects in cranvas, as explained in the next two sections.
 
 
 \subsection{Mutaframes}
-
-A mutaframe is basically a mutable data frame, meaning that it can
-be modified anywhere regardless of the current environment. By comparison,
+Mutaframes are extensions of R data frames, that are being made mutable. This means that changes to its elements can be made anywhere regardless of the current environment. By comparison,
 a data frame can only be modified in the environment in which it was
 created, unless we use the non-local assignment operator \texttt{<\textcompwordmark{}<-}.
 The difference is highlighted in the example below:
@@ -305,6 +303,20 @@ the \texttt{dist} variable:
 <<sqrt-dist, eval=FALSE>>=
 mf$dist = sqrt(mf$dist)
 @
+
+A more complex but direct application of mutaframes is the example shown in the movie displayed in figure~\ref{tour}: here, we see a two dimensional grand tour \citep{asimov} through the flea data set (provided in the {\tt tourr} package). After a while, we can see a separation of the data into three clusters (species separate into three distinct multivariate clusters). A two dimensional tour consists of a series of projections into two dimensional space. By choosing projections less than 6 degree apart, a sense of continuity is preserved for the observer. This continuity allows us to identify clusters as groups of points that share a common fate \citep[e.g.][]{wolfe2012sensation}. Internally, the movie-like view is upheld by repeated changes to the $X$ and $Y$ values displayed, which are propagated to the view. Simultaneously, changes are made to a second mutaframe containing information about the axis and labels. 
+
+\begin{figure}
+\includemedia[
+    width=0.6\linewidth,
+    height=0.6\linewidth,
+    addresource=movies/flea.mp4,
+    activate=onclick,
+    deactivate=onclick,
+    flashvars={source=movies/flea.mp4}
+]{}{VPlayer.swf}
+\caption{\label{tour}Grand tour of through the flea data. The data separate into three clusters.}
+\end{figure}
 
 
 \subsection{Reference classes}
@@ -359,23 +371,7 @@ It is those meta data that correspond directly to the graphical elements shown, 
 
 {\tt cranvas} allows the possibility of adding user customized meta information to any display.
 
-\subsection{Mutable Objects}
 
-\begin{figure}
-\includemedia[
-    width=0.6\linewidth,
-    height=0.6\linewidth,
-    addresource=movies/flea.mp4,
-    activate=onclick,
-    deactivate=onclick,
-    flashvars={source=movies/flea.mp4}
-]{}{VPlayer.swf}
-\caption{\label{tour}Grand tour of through the flea data. The data separate into three clusters.}
-\end{figure}
-
-\subsection{Tour}
-
-mutaframe
 
 \subsection{Linking}
 Linking forms the core of communication between multiple views. 
