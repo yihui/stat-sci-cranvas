@@ -136,10 +136,9 @@ model = function(i) {
   brushed[i] <<- TRUE
 }
 view = function(b = brushed) {
-  d = cars
   # solid points (19) for b == TRUE, and circles (21) for FALSE
-  plot(d, pch = ifelse(b, 19, 21))
-  rect(min(d[b, 1]), min(d[b, 2]), max(d[b, 1]), max(d[b, 2]), lty=2)
+  plot(cars, pch = ifelse(b, 19, 21))
+  rect(min(cars[b, 1]), min(cars[b, 2]), max(cars[b, 1]), max(cars[b, 2]), lty=2)
 }
 controller = function(i) {
   # update the model and then the view
