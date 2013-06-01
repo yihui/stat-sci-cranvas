@@ -359,10 +359,16 @@ It is those meta data that correspond directly to the graphical elements shown, 
 {\tt cranvas} allows the possibility of adding user customized meta information to any display.
 
 \subsection{Linking}
-One-to-one linking, categorical linking (application: maps and other
-plots), kNN linking
+Linking forms the core of communication between multiple views. 
+By default, all objects and views are linked that involve variables from the same data set. 
+It is feasible to extend this concept to  link different sources or aggregation levels. Linking within the same data set is implicit one-to-one linking. If the same objects are under consideration but are reported in different data sets, we can make this linking explicit. In the example of figure~\ref{linked}, data on states is linked from two different sources, resulting in {\it categorical linking}, as each state in the map is described by multiple locations following the border.
+ kNN ($k$ nearest neigbor) linking is based on (multivariate) distance between points. Selecting one point in a view also selects the $k$ closest points in its neighborhood. This can be based on geographical distance as much as more abstract multivariate distances.
 
-
+\begin{figure}
+\includegraphics[height=0.4\textwidth]{images/choropleth}
+\includegraphics[height=0.4\textwidth]{images/scatter}
+\caption{\label{linked}Linked map (left) and scatterplot (right). Color shading shows (log) state population with darker shades indicating higher values. The scatterplot on the right displays the number of burglaries in 2009 versus the number of motor vehicle thefts by state. There is a strong correlation between the variables, which is mainly induced by a strong underlying correlation with population. Compared to other states, California displays a high number of motor vehicle thefts compared to the number of burglaries.}
+\end{figure}
 \subsection{Interactions}
 
 The list below shows a set of interactions ordered depending on the level at which it can be resolved: 
