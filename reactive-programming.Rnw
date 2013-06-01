@@ -155,8 +155,8 @@ controller(1:4)  # the first four point
 controller(10:28)  # points from 10th to 28th
 @
 
-\caption{Brush a scatterplot using the MVC design: brush the first point (left),
-then brush all points from the 10th to 30th. The \texttt{cars} data
+\caption{Brush a scatterplot using the MVC design: brush the first four points (left),
+then brush all points from the 10th to 28th. The \texttt{cars} data
 is a built-in dataset in R.\label{fig:mvc-brush}}
 \end{figure}
 
