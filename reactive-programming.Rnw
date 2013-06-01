@@ -64,7 +64,7 @@ One of the big challenges of developing interactive statistical applications is 
 %Start with a discussion of interactive graphics -- where does it come from, }
 
 % ---
-% I was assuming the audience familar should be very familiar with this (Yihui)
+% I was assuming the audience should be very familiar with this (Yihui)
 % ---
 
 Interactive graphics progresses us beyond the limitations of static
