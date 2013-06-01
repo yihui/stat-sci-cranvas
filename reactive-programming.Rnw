@@ -59,19 +59,35 @@ One of the big challenges of developing interactive statistical applications is 
 
 
 \section{Introduction}
-\hh{This needs a gentler introduction -- }
-\hh{
-Start with a discussion of interactive graphics -- where does it come from, }
 
-\hh{What are the main tasks that our system is supposed to allow?}
+%\hh{This needs a gentler introduction -- }
+%\hh{
+%Start with a discussion of interactive graphics -- where does it come from, }
 
-\hh{Single display interactions: 
-changes to the scale/resolution: zooming, panning, 
-additional information: querying}
+% ---
+% I was assuming the audience familar should be very familiar with this (Yihui)
+% ---
 
-\hh{Linking between displays}
+Interactive graphics progresses us beyond the limitations of static
+statistical displays, in particular, for exploring high-dimensional data.
+With a static image, we can only see one aspect of the data at one time.
+Interactive graphics allows us to inspect data dynamically from multiple angles.
+For example, we may examine the distribution of a variable from a histogram, and
+change its binwidth on the fly without having to manually redraw the plot again and again
+according to different values of the binwidth.
 
-The first set of tasks is easier to solve - there are a lot of web applications that allow various single display interactions (Gapminder, ManyEyes, lots of d3 examples), and that's what people usually associate with interactive graphics.
+
+The main tasks that an interactive graphics system is supposed to allow are:
+
+\begin{enumerate}
+\item Single display interactions, such as modifying the plot attributes (brushing, zooming, panning, deletion) and obtaining additional information (querying graphical elements)
+\item Linking between different displays of the same dataset or connected datasets
+\end{enumerate}
+
+The first set of tasks is easier to solve -- there are a lot of web applications
+that allow various single display interactions based on, for instance,
+Gapminder \citep{RJ2009}, ManyEyes \citep{viegas2007}, and D3 \citep{bostock2011d3}.
+That is what people usually associate with interactive graphics.
 
 Linked graphics is more tricky - it allows changes across different displays as well as across different aggregation levels of the data. \hh{example}
 
