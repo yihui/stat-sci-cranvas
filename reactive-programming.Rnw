@@ -17,7 +17,7 @@
 \begin{document}
 
 <<setup, include=FALSE>>=
-options(replace.assign=TRUE, reindent.spaces=2)
+options(replace.assign=TRUE, reindent.spaces=2, width=70)
 knit_hooks$set(document=hook_movecode, par = function(before, options, envir) {
   if (before && options$fig.show != "none") {
     par(mar = c(4, 4, 0.1, 0.1), cex.lab = 0.95, cex.axis = 0.9,
