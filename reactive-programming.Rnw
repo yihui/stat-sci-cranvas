@@ -100,9 +100,9 @@ and Mondrian \citep{theus02}, which support interactive displays
 of multivariate data, but they lack the extensibility, and tight integration
 with modeling that R furnishes.
 
-One of the big challenges in the development of interactive statistical applications is to resolve a user's action on the data level. THis is sometimes referred to as the `plumbing' of interactice graphics. 
-\hh{Look up Andreas Buja's paper: “Elements of a Viewing Pipeline for Data Analysis,” Buja, A., Asimov, D., Hurley, C.B., and McDonald, J.A., in: Dynamic Graphics for Statistics, W.S. Cleveland, M.E. McGill (eds.), Wadsworth, Statistics/Probability Series, 277–297 (1988).}
-\hh{Cite Andreas', Hadley's and Michael's plumbing papers and summarize in one sentence each.}
+One of the big challenges in the development of interactive statistical applications is to resolve a user's action on the data level. This is sometimes referred to as the `plumbing' of interactice graphics
+\citep{buja1988,wickham2009plumbing}.
+
 
 The Model/View/Controller (MVC) triple is a software architecture pattern
 first described by \citet{Krasner1988}. It is widely used in GUI
