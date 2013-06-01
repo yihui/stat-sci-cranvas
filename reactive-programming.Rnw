@@ -201,7 +201,7 @@ Our goal is to automatically notify the view whenever there is a change
 in the model. For an application of interactive graphics, there are
 two types of objects in the model:
 \begin{itemize}
-\item  data to present in the plots; it is often of a tabular form like
+\item  data to be presented in the plots; it is often of a tabular form like
 the data frame in R
 \item  meta data to store additional information of the plots such as
 the axis limits; it is irregular like a list
