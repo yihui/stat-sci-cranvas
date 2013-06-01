@@ -157,7 +157,7 @@ an emulation.
 
 \begin{figure}
 <<mvc-brush, fig.width=3.5, fig.height=3.5, fig.show='hold', out.width='.49\\linewidth', par=TRUE, dev='tikz', cache=TRUE>>=
-controller(1:4)  # the first four point
+controller(1:4)  # the first four points
 controller(10:28)  # points from 10th to 28th
 @
 
