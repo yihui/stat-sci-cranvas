@@ -195,18 +195,6 @@ interactive graphics. In this paper we will discuss how it works as
 well its application in interactive graphics.
 
 
-\section{Related work}
-
-
-\citet{Whalen05} built an interactive GUI using the MVC pattern to
-explore linked data. The GUI was based on the RGtk package (later
-evolved into RGtk2 \citep{RGtk2}), and MVC was implemented in the
-MVCClass package. \emph{TODO}: need to figure out how she implemented
-signals \url{http://www.bioconductor.org/packages/2.11/bioc/html/MVCClass.html}
-
-The iplots package \citep{R-iplots}
-
-
 \section{Reactive programming}
 
 Our goal is to automatically notify the view whenever there is a change
@@ -408,7 +396,15 @@ Interactions with both anchor and binwidth cues consist of horizontal shifts, wh
 
 
 
-\section{Conclusions}
+\section{Discussion and Conclusions}
+
+\citet{Whalen05} built an interactive GUI using the MVC pattern to
+explore linked data. The GUI was based on the RGtk package (later
+evolved into RGtk2 \citep{RGtk2}), and MVC was implemented in the
+MVCClass package. \emph{TODO}: need to figure out how she implemented
+signals \url{http://www.bioconductor.org/packages/2.11/bioc/html/MVCClass.html}
+
+The iplots package \citep{R-iplots}
 
 JS libraries
 
