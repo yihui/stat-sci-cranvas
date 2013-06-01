@@ -10,10 +10,8 @@
  {hyperref}
 \hypersetup{
  citecolor=blue,urlcolor=blue}
-\usepackage{breakurl}
 
-\usepackage{xcolor}
-\newcommand{\hh}[1]{{\color{orange} #1}}
+\newcommand{\hh}[1]{{\color{magenta} #1}}
 
 \begin{document}
 
@@ -123,8 +121,6 @@ the model and the view to update their states. Below is a minimal
 example on how to brush a scatterplot under the MVC design implemented
 in R \citep{R2013}:
 
-\hh{I wouldn't call what is done 'brushing' - to me, brushing has a graphical component that I am completely missing in this setting. What is shown is 'highlighting'. Could you try to re-phrase the example?}
-
 <<mvc-example>>=
 brushed = logical(nrow(cars)) # status of the brush indices
 model = function(i) {
@@ -133,8 +129,10 @@ model = function(i) {
   brushed[i] <<- TRUE
 }
 view = function(b = brushed) {
+  d = cars
   # solid points (19) for b == TRUE, and circles (21) for FALSE
-  plot(cars, pch = ifelse(b, 19, 21))
+  plot(d, pch = ifelse(b, 19, 21))
+  rect(min(d[b, 1]), min(d[b, 2]), max(d[b, 1]), max(d[b, 2]), lty=2)
 }
 controller = function(i) {
   # update the model and then the view
@@ -183,7 +181,7 @@ paradigm targeted at the propagation of changes in data flows \hh{citation?}.
 attach listeners on data objects such that (different) events will be triggered
 corresponding to changes in data. 
 In the above example, the plot will be
-updated as soon as object \texttt{brushed}} is modified without the need to explicitly calling
+updated as soon as object \texttt{brushed} is modified without the need to explicitly calling
 \texttt{view()}. This makes it much easier to express the logic of
 interactive graphics. 
 
@@ -392,7 +390,7 @@ mutaframe
 JS libraries
 
 \bibliographystyle{imsart-nameyear}
-\bibliography{reactive-programming,R-packages,phd-thesis-yihui-xie,/part-i}
+\bibliography{reactive-programming}
 
 
 \end{document}
