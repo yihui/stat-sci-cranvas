@@ -183,9 +183,9 @@ must be updated accordingly.
 
 Ideally we want all views to respond to changes in the model automatically
 so there is no additional step of updating the views after the model
-is changed. This can be achieved by reactive programming, a programming
-paradigm targeted at the propagation of changes in data flows \hh{citation?}.
-\hh{Reactive programming is an object-oriented programming approach that is based on an event-listener model. } We
+is changed. This can be achieved by reactive programming, an object-oriented
+programming paradigm based on an event-listener model and targeted at
+the propagation of changes in data flows. We
 attach listeners on data objects such that (different) events will be triggered
 corresponding to changes in data. 
 In the above example, the plot will be
