@@ -3,6 +3,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{color}
 \usepackage{url}
+\usepackage{media9}
 \usepackage[authoryear]{natbib}
 \usepackage[unicode=true,pdfusetitle,
  bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
@@ -358,6 +359,24 @@ It is those meta data that correspond directly to the graphical elements shown, 
 
 {\tt cranvas} allows the possibility of adding user customized meta information to any display.
 
+\subsection{Mutable Objects}
+
+\begin{figure}
+\includemedia[
+    width=0.6\linewidth,
+    height=0.6\linewidth,
+    addresource=movies/flea.mp4,
+    activate=onclick,
+    deactivate=onclick,
+    flashvars={source=movies/flea.mp4}
+]{}{VPlayer.swf}
+\caption{\label{tour}Grand tour of through the flea data. The data separate into three clusters.}
+\end{figure}
+
+\subsection{Tour}
+
+mutaframe
+
 \subsection{Linking}
 Linking forms the core of communication between multiple views. 
 By default, all objects and views are linked that involve variables from the same data set. 
@@ -389,9 +408,6 @@ Interactions with both anchor and binwidth cues consist of horizontal shifts, wh
 
 
 
-\subsection{Tour}
-
-mutaframe
 
 
 \section{Conclusions}
@@ -399,7 +415,7 @@ mutaframe
 JS libraries
 
 \section*{Supplementary material}
-Movies showing some interactions are available through \hh{What would be a good placefor these movies?}
+Movies showing some interactions are available through \hh{What would be a good place for these movies?}
 \bibliographystyle{imsart-nameyear}
 \bibliography{reactive-programming}
 
