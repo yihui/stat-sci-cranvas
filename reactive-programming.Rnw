@@ -210,7 +210,7 @@ There are two approaches to making them reactive, respectively. We
 can use \emph{mutaframes} \citep{R-plumbr} for the data object, and
 \emph{reference classes} \citep{Chambers2013} for the meta data.
 The fundamental technique underlying them is the \emph{active binding}
-in R, thanks to the work of the R core member Luke Tierney.
+in R, thanks to the work of the R core team (in particular, Luke Tierney).
 
 Active bindings allow events (expressed as functions) to be attached
 on objects and these events are executed when objects are assigned
