@@ -465,7 +465,10 @@ The future work of \texttt{cranvas} is to include more plot types such as hexbin
 and scatterplot matrices, and allow users to define how the system reacts to changes.
 
 \section*{Supplementary material}
-Movies showing some interactions are available through \hh{What would be a good place for these movies?}
+The \texttt{cranvas} package is available on GitHub at \url{https://github.com/ggobi/cranvas}.
+We have movies showing some interactions that are available through the website
+\url{http://cranvas.org}.
+
 \bibliographystyle{imsart-nameyear}
 \bibliography{reactive-programming}
 
