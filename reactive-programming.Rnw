@@ -316,7 +316,9 @@ containing information about the axis and labels.
     deactivate=onclick,
     flashvars={source=movies/flea.mp4}
 ]{}{VPlayer.swf}
-\caption{\label{tour}Grand tour of through the flea data. The data separate into three clusters.}
+\caption{\label{tour}Grand tour of through the flea data. The data separate into three clusters.
+The video above requires Adobe Reader (version $\geq$ 9); if it does not work,
+please watch the video online at \url{http://cranvas.org}.}
 \end{figure}
 
 
