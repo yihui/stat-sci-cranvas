@@ -393,7 +393,7 @@ On the developer's side, the main idea behind resolving an interaction between t
 Graphical displays are data summaries, and as such they require some level of aggregation of the original data. This information is stored in form of meta data. Meta data is plot specific. Not only are data values stored to render a display, but also the parameters necessary to derive the data values for the display. 
 It is those meta data that correspond directly to the graphical elements shown, and with which the user interacts. For resolving the interaction, the aggregation from the original data has to be reversed. Interactions are therefore only feasible in situations that can be reversed. A higher level of aggregation in a display usually requires a more complex data structure for an interaction.
 
-{\tt cranvas} allows the possibility of adding user customized meta information to any display.
+The {\tt cranvas} package allows the possibility of adding user customized meta information to any display.
 
 
 
