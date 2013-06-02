@@ -447,15 +447,22 @@ Interactions with both anchor and binwidth cues consist of horizontal shifts, wh
 
 \section{Discussion and Conclusions}
 
-\citet{Whalen05} built an interactive GUI using the MVC pattern to
+There have been a number of R packages attempting to solve similar problems as we presented. For example,
+\citet{Whalen05} built an interactive GUI system using the MVC pattern to
 explore linked data. The GUI was based on the RGtk package (later
 evolved into RGtk2 \citep{RGtk2}), and MVC was implemented in the
-MVCClass package. \emph{TODO}: need to figure out how she implemented
-signals \url{http://www.bioconductor.org/packages/2.11/bioc/html/MVCClass.html}
+MVCClass package. The iplots package \citep{R-iplots} provides high interaction statistical graphics, written in Java.
 
-The iplots package \citep{R-iplots}
+The \texttt{cranvas} package has a clear distinction with these packages in terms of
+the underlying data structure. The plotting pipeline is expressed and attached to
+the data as well as the meta data. Using the reactive programming model, the user
+does not need to pay attention to the whole pipeline, which makes it easy to extend
+this system. For example, implementing the tour is nothing but to draw a scatterplot
+(of projected variables), and keep on modifying the data, because the data will
+update the scene automatically upon changes.
 
-JS libraries
+The future work of \texttt{cranvas} is to include more plot types such as hexbin plots
+and scatterplot matrices, and allow users to define how the system reacts to changes.
 
 \section*{Supplementary material}
 Movies showing some interactions are available through \hh{What would be a good place for these movies?}
