@@ -324,9 +324,21 @@ please watch the video online at \url{http://cranvas.org}.}
 
 \subsection{Reference classes}
 
-R introduced reference classes since version 2.12 thanks to John Chambers.
+R introduced reference classes since version 2.12 (thanks to John Chambers).
+This made it possible to create objects with fields that can be accessed by reference.
+A consequence of this feature is that such objects can be used for storing meta data
+in the graphics system, and the data can be easily modified outside of plotting functions.
+For instance, we store the axes limits in an object \texttt{meta} as \texttt{meta\$limits}
+(in other words, \texttt{limits} is a field of \texttt{meta}). After the plot has been
+drawn, we can still modify its limits via command line and the new limits will be
+available to the internal members of the plotting function. This is inconvenient,
+if not impossible, under the usual copy-on-modify semantics in R.
 
-extension by objectSignals
+What is more important in our system is the extension by the \texttt{objectSignals} package
+\citep{objectSignals} based on reference classes. This packages allows us to attach
+listeners on reference classes objects. This is similar to mutaframes described before,
+but we can create objects of arbitrary structures. The difference between mutaframes and
+signal objects is the same as the difference between data frames and lists in R.
 
 
 \section{Application}
