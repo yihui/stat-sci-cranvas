@@ -332,10 +332,31 @@ extension by objectSignals
 \section{Application}
 Interaction happens on multiple levels. The most common forms of interaction with a display are listed below in decreasing order of immediacy with which this interaction between the user and the display happens:
 \begin{description}
-\item [\bf Direct manipulation] of graphical objects \citep{cleveland, wills} is at the heart of interactive graphics.  Direct manipulation is what we use only for the highest level of interaction, such as selection or brushing of elements. With a set of different modes (querying, scaling mode as e.g. implemented in xgobi, ggobi \citet{ggobi}) a set of different or additional interactions can be incorporated at the highest level. Another approach is to make use of visual cues \cite{manet, mondrian}, which make areas of interactions visible to the user by changing the cursor upon entering the cue area. Visual cues are usually associated with changes to the resolution of a representation or scales of a display. 
-\item [{\bf Input devices}:] most input devices, such as mice or touch pads, allow a finer level of interaction than just click-selection; e.g. all operating platforms and devices specify wheel events (either through the presence of a mouse wheel, a mouse move with additional modifier key, or a touch gesture).  
-\item [\bf Keystrokes] can be used for quick access to functions that are also accessible through a (popup) menu or other toolbar. Figure~\ref{map-all} shows an example of a key stroke interaction (arrow keys left and right) to move between a choropleth map of the United States and a population based cartogram. 
-\item [\bf Functional access] through the console: Accessor functions allow us to get information about the state of  objects (e.g. get selected elements). Mutator functions enable the user to set a particular state for objects in a display (e.g. set highlighting color to red, set points to size 5).
+
+\item [\bf Direct manipulation] of graphical objects \citep{becker1987, wills1999}
+is at the heart of interactive graphics.  Direct manipulation is what we use only
+for the highest level of interaction, such as selection or brushing of elements.
+With a set of different modes (querying, scaling mode as e.g. implemented in XGobi,
+GGobi \citep{swayne2003}) a set of different or additional interactions can be
+incorporated at the highest level. Another approach is to make use of visual cues
+\citep{unwin96, theus02}, which make areas of interactions visible to the user by
+changing the cursor upon entering the cue area. Visual cues are usually associated
+with changes to the resolution of a representation or scales of a display.
+
+\item [{\bf Input devices}:] most input devices, such as mice or touch pads,
+allow a finer level of interaction than just click-selection; e.g. all operating
+platforms and devices specify wheel events (either through the presence of a
+mouse wheel, a mouse move with additional modifier key, or a touch gesture).
+
+\item [\bf Keystrokes] can be used for quick access to functions that are also
+accessible through a (popup) menu or other toolbar. Figure \ref{cartogram} shows
+an example of a key stroke interaction (arrow keys left and right) to move
+between a choropleth map of the United States and a population based cartogram.
+
+\item [\bf Functional access] through the console: Accessor functions allow us
+to get information about the state of  objects (e.g. get selected elements).
+Mutator functions enable the user to set a particular state for objects in a
+display (e.g. set highlighting color to red, set points to size 5).
 \end{description}
 
 \begin{figure}
