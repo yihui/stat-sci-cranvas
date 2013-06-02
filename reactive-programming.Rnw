@@ -89,9 +89,9 @@ Gapminder \citep{RJ2009}, ManyEyes \citep{viegas2007}, and D3 \citep{bostock2011
 That is what people usually associate with interactive graphics.
 
 Linked graphics is more tricky - it allows changes across different displays as well as across different aggregation levels of the data. For example, suppose we have a scatterplot of the variable
-\texttt{Y} versus \texttt{X}, and a histogram of \texttt{Z} (all three variables
+$Y$ versus $X$, and a histogram of $Z$ (all three variables
 are from the same dataset); when we highlight a subset of points in the scatterplot,
-and we need to show the distribution of the subset of \texttt{Z} in the histogram as well.
+and we need to show the distribution of the subset of $Z$ in the histogram as well.
 The key question is how to let the plots be aware of each other's changes, and respond
 both automatically and immediately.
 
