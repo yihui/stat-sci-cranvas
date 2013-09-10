@@ -4,3 +4,7 @@ figure/
 reactive-programming.pdf
 *.log
 *.bbl
+*.aux
+*.blg
+*.tex
+*.out
