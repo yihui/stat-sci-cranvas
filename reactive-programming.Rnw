@@ -203,8 +203,8 @@ such that (different) events will be triggered corresponding to changes in
 data. In the above example, the plot will be updated as soon as object
 \texttt{brushed} is modified without the need to explicitly calling \texttt
 {view()}. This makes it much easier to express the logic of interactive
-graphics. In this paper we will discuss how it works as well its application
-in interactive graphics.
+graphics. In this paper we will discuss how it works as well as its
+application in interactive graphics.
 
 
 \section{Reactive programming}
