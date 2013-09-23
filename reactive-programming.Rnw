@@ -195,17 +195,16 @@ new view is added to the system, the  controller
 must be updated accordingly.
 
 Ideally we want all views to respond to changes in the model automatically
-so there is no additional step of updating the views after the model
-is changed. This can be achieved by reactive programming, an object-oriented
-programming paradigm based on an event-listener model and targeted at
-the propagation of changes in data flows. We
-attach listeners on data objects such that (different) events will be triggered
-corresponding to changes in data. 
-In the above example, the plot will be
-updated as soon as object \texttt{brushed} is modified without the need to explicitly calling
-\texttt{view()}. This makes it much easier to express the logic of
-interactive graphics. In this paper we will discuss how it works as
-well its application in interactive graphics.
+so there is no additional step of updating the views after the model is
+changed. This can be achieved by reactive programming, an object-oriented
+programming paradigm based on an event-listener model and targeted at the
+propagation of changes in data flows. We attach listeners on data objects
+such that (different) events will be triggered corresponding to changes in
+data. In the above example, the plot will be updated as soon as object
+\texttt{brushed} is modified without the need to explicitly calling \texttt
+{view()}. This makes it much easier to express the logic of interactive
+graphics. In this paper we will discuss how it works as well its application
+in interactive graphics.
 
 
 \section{Reactive programming}
@@ -307,18 +306,19 @@ the \texttt{dist} variable:
 mf$dist = sqrt(mf$dist)
 @
 
-A more complex but direct application of mutaframes is the example shown in the
-movie displayed in Figure \ref{tour}: here, we see a two dimensional grand tour
-\citep{asimov1985} through the flea data set (provided in the {\tt tourr} package).
-After a while, we can see a separation of the data into three clusters (species
-separate into three distinct multivariate clusters). A two dimensional tour consists
-of a series of projections into two dimensional space. By choosing projections
-less than 6 degree apart, a sense of continuity is preserved for the observer.
-This continuity allows us to identify clusters as groups of points that share a
-common fate \citep[e.g.][]{wolfe2012sensation}. Internally, the movie-like view
-is upheld by repeated changes to the $X$ and $Y$ values displayed, which are
-propagated to the view. Simultaneously, changes are made to a second mutaframe
-containing information about the axis and labels. 
+A more complex but direct application of mutaframes is the example shown in
+the movie displayed in Figure \ref{tour}: here, we see a two dimensional
+grand tour \citep{asimov1985} through the flea data set (provided in the {\tt
+tourr} package). After a while, we can see a separation of the data into
+three clusters (species separate into three distinct multivariate clusters).
+A two dimensional tour consists of a series of projections into two
+dimensional space. By choosing projections less than 6 degree apart, a sense
+of continuity is preserved for the observer. This continuity allows us to
+identify clusters as groups of points that share a common fate \citep[e.g.]
+[]{wolfe2012sensation}. Internally, the movie-like view is upheld by
+repeated changes to the $X$ and $Y$ values displayed, which are propagated
+to the view. Simultaneously, changes are made to a second mutaframe
+containing information about the axis and labels.
 
 \begin{figure}
 \includemedia[
@@ -395,8 +395,10 @@ display (e.g. set highlighting color to red, set points to size 5).
 \caption{\label{bar} Barchart (left) and spineplot (right) of the number of bedrooms in housing sales. Highlighted are sales of \$200k and higher. Querying gives details on each bin (houses with a particular number of bedrooms) and the selected houses with this bin.}
 \end{figure}
 
-On the developer's side, the main idea behind resolving an interaction between the user and the display, is to actually resolve the interaction at the level of the data, but make it appear as if the user had directly interacted with the graphical object. 
-%
+On the developer's side, the main idea behind resolving an interaction
+between the user and the display, is to actually resolve the interaction at
+the level of the data, but make it appear as if the user had directly
+interacted with the graphical object.
 
 \begin{figure}
 % \includegraphics[width=0.3\textwidth]{images/map-0}
@@ -415,8 +417,17 @@ On the developer's side, the main idea behind resolving an interaction between t
 \end{figure}
 
 \subsection{Meta data}
-Graphical displays are data summaries, and as such they require some level of aggregation of the original data. This information is stored in form of meta data. Meta data is plot specific. Not only are data values stored to render a display, but also the parameters necessary to derive the data values for the display. 
-It is those meta data that correspond directly to the graphical elements shown, and with which the user interacts. For resolving the interaction, the aggregation from the original data has to be reversed. Interactions are therefore only feasible in situations that can be reversed. A higher level of aggregation in a display usually requires a more complex data structure for an interaction.
+
+Graphical displays are data summaries, and as such they require some level
+of aggregation of the original data. This information is stored in form of
+meta data. Meta data is plot specific. Not only are data values stored to
+render a display, but also the parameters necessary to derive the data
+values for the display. It is those meta data that correspond directly to
+the graphical elements shown, and with which the user interacts. For
+resolving the interaction, the aggregation from the original data has to be
+reversed. Interactions are therefore only feasible in situations that can be
+reversed. A higher level of aggregation in a display usually requires a more
+complex data structure for an interaction.
 
 Since the data structure of meta data is very flexible, its application can be very wide.
 The {\tt cranvas} package allows the possibility of adding user customized meta
@@ -426,10 +437,20 @@ meta data to generate text labels when querying a plot.
 
 
 \subsection{Linking}
-Linking forms the core of communication between multiple views. 
-By default, all objects and views are linked that involve variables from the same data set. 
-It is feasible to extend this concept to  link different sources or aggregation levels. Linking within the same data set is implicit one-to-one linking. If the same objects are under consideration but are reported in different data sets, we can make this linking explicit. In the example of Figure \ref{linked}, data on states is linked from two different sources, resulting in {\it categorical linking}, as each state in the map is described by multiple locations following the border.
- kNN ($k$ nearest neigbor) linking is based on (multivariate) distance between points. Selecting one point in a view also selects the $k$ closest points in its neighborhood. This can be based on geographical distance as much as more abstract multivariate distances.
+
+Linking forms the core of communication between multiple views. By default,
+all objects and views are linked that involve variables from the same data
+set. It is feasible to extend this concept to  link different sources or
+aggregation levels. Linking within the same data set is implicit one-to-one
+linking. If the same objects are under consideration but are reported in
+different data sets, we can make this linking explicit. In the example of
+Figure \ref{linked}, data on states is linked from two different sources,
+resulting in {\it categorical linking}, as each state in the map is
+described by multiple locations following the border. kNN ($k$ nearest
+neigbor) linking is based on (multivariate) distance between points.
+Selecting one point in a view also selects the $k$ closest points in its
+neighborhood. This can be based on geographical distance as much as more
+abstract multivariate distances.
 
 \begin{figure}
 \includegraphics[height=0.4\textwidth]{images/choropleth}
@@ -438,23 +459,74 @@ It is feasible to extend this concept to  link different sources or aggregation 
 \end{figure}
 \subsection{Interactions}
 
-The list below shows a set of interactions ordered depending on the level at which it can be resolved: 
+The list below shows a set of interactions ordered depending on the level at
+which it can be resolved:
+
 \begin{description}
-\item[{\bf Zooming and panning}] are direct interactions with the display, that can be resolved directly without the need of interaction with the original data. In {\tt cranvas}, the core of zooming and panning consists of simple changes to {\tt meta\$limits}.
-\item[\bf Querying] is another interaction that usually can be resolved without any further information from the original data. Querying of graphical objects involves, in a first step the display of the corresponding values of the meta data. In the case of the barcharts in Figure \ref{bar}, querying of the bins displays information, about the bin's level, the number of records it encompasses, as well as the proportion of the whole data that this bin contains. The same information is also displayed at the level of the selected values in the bar. The proportion shown is the proportion of selected elements within the bin. 
 
-\item[{\bf Brushing, Querying, and Selection}]  are all (mode-dependent) interactions that require backtracking of one step of aggregation; the histogram of Figure \ref{hist} shows sales prices of all houses sold in Ames, IA from 2008 to 2012. The yellow rectangle corresponds to an an area based selection of all houses with sales of \$200k or more, that triggers a highlighting of all corresponding houses in all displays of the Ames housing data. This includes the histogram itself, where all bins intersecting with the selection rectangle are filled with highlighting color, and all barcharts of the number of bedrooms as shown in Figure \ref{bar}.
+\item[{\bf Zooming and panning}] are direct interactions with the display,
+that can be resolved directly without the need of interaction with the
+original data. In {\tt cranvas}, the core of zooming and panning consists of
+simple changes to {\tt meta\$limits}.
 
-Internally, this selection is handled with one step of backtracking:
-Once the user draws a selection rectangle, meta data of all graphical objects intersecting with it is investigated. In the case of a histogram, bins are the graphical objects intersecting with a selection rectangle. Corresponding to each bin, meta information is available. This information contains lower and upper limits of an interval on the scale of the variable  and the number of records in the original data with values within those limits. The backtracking corresponds to identifying all records in the original data falling within the limits of the selected bin. The original data contains an internal binary variable {\tt .brushed} encoding selection status of a record. When this status is changed, the change is propagated to all dependencies, which results in an update to all affected views. In the situation of the histogram, a selection corresponds to an update of the {\tt .brushed} variable, which in turn informs all linked views of an update of the highlighting status. One of the dependent views is the histogram itself, which shows highlighting in form of superimposing a histogram of the highlighted records on top of the original histogram. What the user perceives as `selecting' bins is actually a reaction to a change in the internal brushing variable.
+\item[\bf Querying] is another interaction that usually can be resolved
+without any further information from the original data. Querying of
+graphical objects involves, in a first step the display of the corresponding
+values of the meta data. In the case of the barcharts in Figure \ref{bar},
+querying of the bins displays information, about the bin's level, the number
+of records it encompasses, as well as the proportion of the whole data that
+this bin contains. The same information is also displayed at the level of
+the selected values in the bar. The proportion shown is the proportion of
+selected elements within the bin.
 
-\item[{\bf Interactions with graphical objects}]: 
-visual cues indicate additional areas of interaction in graphical objects other than the ones representing the data. Figure \ref{hist} shows several examples of visual cues in a histogram.
-Both anchor point and bin width are graphical representations of plotting parameters for the histogram. The anchor of a histogram is the lower limit of the left most bin. The bin width then defines the interval at which breaks are drawn to define bins. 
-Interactions with both anchor and binwidth cues consist of horizontal shifts, which re-set the actual values parametrizing the histogram. Changes to the anchor allow to test for instabilities in the display due to discreteness in the data.  Binwidth changes show the data at different levels of smoothness and therefore allow for a visualization of `big' picture marginal distributions for large bin widths and the investigation of small pattern features, such as multiple modes and gaps in the data for small bin widths. Examples for both of these interactions are available as movies in the supplementary material.
+\item[{\bf Brushing, Querying, and Selection}] are all (mode-dependent)
+interactions that require backtracking of one step of aggregation; the
+histogram of Figure \ref{hist} shows sales prices of all houses sold in
+Ames, IA from 2008 to 2012. The yellow rectangle corresponds to an an area
+based selection of all houses with sales of \$200k or more, that triggers a
+highlighting of all corresponding houses in all displays of the Ames housing
+data. This includes the histogram itself, where all bins intersecting with
+the selection rectangle are filled with highlighting color, and all
+barcharts of the number of bedrooms as shown in Figure \ref{bar}.
+
+Internally, this selection is handled with one step of backtracking: Once
+the user draws a selection rectangle, meta data of all graphical objects
+intersecting with it is investigated. In the case of a histogram, bins are
+the graphical objects intersecting with a selection rectangle. Corresponding
+to each bin, meta information is available. This information contains lower
+and upper limits of an interval on the scale of the variable  and the number
+of records in the original data with values within those limits. The
+backtracking corresponds to identifying all records in the original data
+falling within the limits of the selected bin. The original data contains an
+internal binary variable {\tt .brushed} encoding selection status of a
+record. When this status is changed, the change is propagated to all
+dependencies, which results in an update to all affected views. In the
+situation of the histogram, a selection corresponds to an update of the {\tt
+.brushed} variable, which in turn informs all linked views of an update of
+the highlighting status. One of the dependent views is the histogram itself,
+which shows highlighting in form of superimposing a histogram of the
+highlighted records on top of the original histogram. What the user
+perceives as `selecting' bins is actually a reaction to a change in the
+internal brushing variable.
+
+\item[{\bf Interactions with graphical objects}]: visual cues indicate
+additional areas of interaction in graphical objects other than the ones
+representing the data. Figure \ref{hist} shows several examples of visual
+cues in a histogram. Both anchor point and bin width are graphical
+representations of plotting parameters for the histogram. The anchor of a
+histogram is the lower limit of the left most bin. The bin width then
+defines the interval at which breaks are drawn to define bins. Interactions
+with both anchor and binwidth cues consist of horizontal shifts, which
+re-set the actual values parametrizing the histogram. Changes to the anchor
+allow to test for instabilities in the display due to discreteness in the
+data.  Binwidth changes show the data at different levels of smoothness and
+therefore allow for a visualization of `big' picture marginal distributions
+for large bin widths and the investigation of small pattern features, such
+as multiple modes and gaps in the data for small bin widths. Examples for
+both of these interactions are available as movies in the supplementary
+material.
+
 \end{description}
-
-
 
 
 
