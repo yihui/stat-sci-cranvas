@@ -78,7 +78,7 @@ change its binwidth on the fly without having to manually redraw the plot again 
 according to different values of the binwidth.
 
 
-The main tasks that an interactive graphics system is supposed to allow are:
+The main tasks that an interactive graphics system is supposed to support are:
 
 \begin{enumerate}
 \item Single display interactions, such as modifying the plot attributes (brushing, zooming, panning, deletion) and obtaining additional information (querying graphical elements)
@@ -97,8 +97,14 @@ and we need to show the distribution of the subset of $Z$ in the histogram as we
 The key question is how to let the plots be aware of each other's changes, and respond
 both automatically and immediately.
 
+\hh{There is an editorial from JCGS by Buja and Swqyne called `What is interactive?' - cite it and paraphrase it.}
+
+\hh{Discuss the pipeline as the basis for communication between plots.}
+
 A number of standalone systems for interactive statistical graphics exist.
-Early systems include PRIM-9, an interactive computer graphics system to picture, rotate, isolate and mask data in up to 9 dimensions \citep{prim9}. More recent packages include
+Early systems include PRIM-9, an interactive computer graphics system to picture, rotate, isolate and mask data in up to 9 dimensions \citep{prim9}. 
+\hh{This needs quite a bit of extension, LISP is still missing, as is Maindonald and some of Oldford's  - we should also move some of the discussion from section 4 to here.}
+More recent packages include
 XGobi and GGobi \citep{swayne2003,cook07}, MANET \citep{unwin96}
 and Mondrian \citep{theus02}, which support interactive displays
 of multivariate data, but they lack the extensibility, and tight integration
