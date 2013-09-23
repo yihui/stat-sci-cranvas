@@ -99,7 +99,7 @@ both automatically and immediately.
 
 \hh{There is an editorial from JCGS by Buja and Swqyne called `What is interactive?' - cite it and paraphrase it.}
 
-\hh{Discuss the pipeline as the basis for communication between plots.}
+\hh{Graham Wills has several publications on interactive graphics that include definitions and discussion on reaction time. We should cite him and also include }
 
 A number of standalone systems for interactive statistical graphics exist.
 Early systems include PRIM-9, an interactive computer graphics system to picture, rotate, isolate and mask data in up to 9 dimensions \citep{prim9}. 
@@ -111,14 +111,19 @@ of multivariate data, but they lack the extensibility, and tight integration
 with modeling that R furnishes.
 
 One of the big challenges in the development of interactive statistical applications is to resolve a user's action on the data level. This is sometimes referred to as the `plumbing' of interactice graphics
-\citep{buja1988,wickham2009plumbing}. In following sections, we start with the
+\citep{buja1988,wickham2009plumbing}.
+\hh{Discuss the pipeline as the basis for communication between plots.}
+
+\hh{We need a good pipeline picture outlining the plumbing of cranvas. This is the picture that we can come back to in the MVC discussion and later in the cranvas example.}
+
+In following sections, we start with the
 discussion of the classical MVC design, and show the role of reactive programming
 in designing an interactive graphics system.
 
 \section{The MVC Architecture}
 
 The Model/View/Controller (MVC) triple is a software architecture pattern
-first described by \citet{Krasner1988}. It is widely used in GUI
+first described by \citet{Krasner1988}. \hh{The reviewer's were wondering whether this is the first mentioning of MVC. What is it based on? Is it maybe published under a different name beforehand? What are the architecture patterns used in early implementations of interactive statistical gaphics? Could you give them a name?} It is widely used in GUI
 (Graphical User Interface) applications, including web applications
 \citep{leff2001web}. The main reason for its popularity is because
 it minimizes the dependencies between  different components of an application.
