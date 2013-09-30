@@ -358,6 +358,13 @@ signal objects is the same as the difference between data frames and lists in R.
 
 
 \section{Application}
+
+In this section, we show some applications in the \textbf{cranvas} package
+\citep{cranvas}. The data infrastructure is based on mutaframes and
+reference classes, as introduced in the previous section. The actual drawing
+is based on the packages \textbf{qtbase} \citep{qtbase} and \textbf{qtpaint}
+\citep{qtpaint}, which connect R to Qt \citep{verzani2012}.
+
 Interaction happens on multiple levels. The most common forms of interaction with a display are listed below in decreasing order of immediacy with which this interaction between the user and the display happens:
 \begin{description}
 
