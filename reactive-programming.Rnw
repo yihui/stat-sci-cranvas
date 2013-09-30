@@ -559,6 +559,9 @@ update the scene automatically upon changes.
 The future work of \texttt{cranvas} is to include more plot types such as hexbin plots
 and scatterplot matrices, and allow users to define how the system reacts to changes.
 
+% what reactive programming enables cranvas to do and other systems cannot
+% easily do is interaction from command line besides direct manipulation
+
 \section*{Supplementary material}
 The \texttt{cranvas} package is available on GitHub at \url{https://github.com/ggobi/cranvas}.
 We have movies showing some interactions that are available through the website
