@@ -55,7 +55,6 @@ University; 2413 Snedecor Hall, Ames 50011, IA, USA. \printead{e2,u2}}
 \end{aug}
 
 \begin{abstract}
-
 One of the big challenges of developing interactive statistical applications
 is the management of the data pipeline, which typically consists of many
 modules. The user's interactions needs to be propagated through these
@@ -70,7 +69,6 @@ benefit from the separation of user interaction from the graphical
 representation, which makes it easier for users and developers to extend
 interactive applications. The implementation is done in the R package \textbf
 {cranvas}, which is freely available on Github.
-
 \end{abstract}
 
 \begin{keyword}
