@@ -159,10 +159,14 @@ in designing an interactive graphics system.
 \section{The MVC Architecture}
 
 The Model/View/Controller (MVC) triple is a software architecture pattern
-first described by \citet{Krasner1988}. \hh{The reviewer's were wondering whether this is the first mentioning of MVC. What is it based on? Is it maybe published under a different name beforehand? What are the architecture patterns used in early implementations of interactive statistical gaphics? Could you give them a name?} It is widely used in GUI
-(Graphical User Interface) applications, including web applications
-\citep{leff2001web}. The main reason for its popularity is because
-it minimizes the dependencies between  different components of an application.
+first described by \citet{Krasner1988} and invented by Trygve Reenskaug in
+the 1970's.
+% \hh{What are the architecture patterns used in early implementations of
+% interactive statistical gaphics? Could you give them a name?}
+It is widely used in GUI (Graphical User Interface) applications, including
+web applications \citep{leff2001web}. The main reason for its popularity is
+because it minimizes the dependencies between  different components of an
+application.
 
 For example, let us assume that the model component consists of a data transformation, such as a square-root or log transformation. The model does not depend on the view, but the view depends on the model in the sense, that if the data is changed or a different data transformation is chosen, the view has to be updated to reflect this change.
 %For example, the model component can be data transformation, and it
