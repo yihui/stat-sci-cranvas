@@ -128,7 +128,14 @@ distribution of the subset of $Z$ in the histogram as well. The key question
 is how to let the plots be aware of each other's changes, and respond both
 automatically and immediately.
 
-\hh{There is an editorial from JCGS by Buja and Swqyne called `What is interactive?' - cite it and paraphrase it.}
+The term ``interactive graphics'' can be ambiguous, as discovered by \citet
+{swayne1999}: it may imply the direct manipulation of the graph itself,
+manipulation of the graph controls, or even the command-line interaction
+with graphs. Nowadays we primarily mean the direct manipulation on graphs,
+but other meanings still have their usefulness. For instance, we may change
+the binwidth of a histogram through a slider, or brush all the outliers a
+scatterplot using command line based a certain numeric criterion, which can
+be difficult to do via direct manipulation.
 
 \hh{Graham Wills has several publications on interactive graphics that include definitions and discussion on reaction time. We should cite him and also include }
 
