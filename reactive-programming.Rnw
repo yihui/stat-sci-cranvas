@@ -43,12 +43,34 @@ set.seed(123)
 \and
 \author{Xiaoyue Cheng\ead[label=e3]{xycheng@iastate.edu}\ead[label=u3,url]{http://xycheng.public.iastate.edu}}
 \affiliation{Department of Statistics, Iowa State University}
-\address{Yihui Xie \printead{e1,u1} and Xiaoyue Cheng \printead{e3,u3} are Graduate Students, Department of Statistics, Iowa State University; 102 Snedecor Hall, Ames 50011, IA, USA.}
-\address{Heike Hofmann is Professor, Department of Statistics, Iowa State University; 2413 Snedecor Hall, Ames 50011, IA, USA. \printead{e2,u2}}
+
+\address{Yihui Xie \printead{e1,u1} and Xiaoyue Cheng \printead{e3,u3} are
+Graduate Students, Department of Statistics, Iowa State University; 102
+Snedecor Hall, Ames 50011, IA, USA.}
+
+\address{Heike Hofmann is Professor, Department of Statistics, Iowa State
+University; 2413 Snedecor Hall, Ames 50011, IA, USA. \printead{e2,u2}}
+
 \runauthor{Y. Xie et al}
 \end{aug}
+
 \begin{abstract}
-One of the big challenges of developing interactive statistical applications is the management of the data pipeline, which typically consists of many modules. The user's interactions needs to be propagated through these modules and finally be reflected in the output representation. Each individual module may be easy to develop and manage, but the dependency structure can be quite challenging. The MVC (Model/View/Controller) pattern is an attempt to solve the problem by separating the user's interaction from the representation of the data. In this paper we discuss the paradigm of {\it reactive programming} in the framework of the MVC architecture and show its applicability to interactive graphics. Under this paradigm, developers  benefit from the separation of user interaction from the graphical representation, which makes it easier for users and developers to extend interactive applications. The implementation is done in the R package \textbf{cranvas}, which is freely available on Github.
+
+One of the big challenges of developing interactive statistical applications
+is the management of the data pipeline, which typically consists of many
+modules. The user's interactions needs to be propagated through these
+modules and finally be reflected in the output representation. Each
+individual module may be easy to develop and manage, but the dependency
+structure can be quite challenging. The MVC (Model/View/Controller) pattern
+is an attempt to solve the problem by separating the user's interaction from
+the representation of the data. In this paper we discuss the paradigm of {\it
+reactive programming} in the framework of the MVC architecture and show its
+applicability to interactive graphics. Under this paradigm, developers
+benefit from the separation of user interaction from the graphical
+representation, which makes it easier for users and developers to extend
+interactive applications. The implementation is done in the R package \textbf
+{cranvas}, which is freely available on Github.
+
 \end{abstract}
 
 \begin{keyword}
@@ -72,30 +94,39 @@ One of the big challenges of developing interactive statistical applications is 
 Interactive graphics progresses us beyond the limitations of static
 statistical displays, in particular, for exploring high-dimensional data.
 With a static image, we can only see one aspect of the data at one time.
-Interactive graphics allows us to inspect data dynamically from multiple angles.
-For example, we may examine the distribution of a variable from a histogram, and
-change its binwidth on the fly without having to manually redraw the plot again and again
-according to different values of the binwidth.
+Interactive graphics allows us to inspect data dynamically from multiple
+angles. For example, we may examine the distribution of a variable from a
+histogram, and change its binwidth on the fly without having to manually
+redraw the plot again and again according to different values of the binwidth.
 
 
 The main tasks that an interactive graphics system is supposed to support are:
 
 \begin{enumerate}
-\item Single display interactions, such as modifying the plot attributes (brushing, zooming, panning, deletion) and obtaining additional information (querying graphical elements)
-\item Linking between different displays of the same dataset or connected datasets
+
+  \item Single display interactions, such as modifying the plot attributes
+  (brushing, zooming, panning, deletion) and obtaining additional
+  information (querying graphical elements);
+
+  \item Linking between different displays of the same dataset or connected
+  datasets.
+
 \end{enumerate}
 
-The first set of tasks is easier to solve -- there are a lot of web applications
-that allow various single display interactions based on, for instance,
-Gapminder \citep{RJ2009}, ManyEyes \citep{viegas2007}, and D3 \citep{bostock2011d3}.
-That is what people usually associate with interactive graphics.
+The first set of tasks is easier to solve -- there are a lot of web
+applications that allow various single display interactions based on, for
+instance, Gapminder \citep{RJ2009}, ManyEyes \citep{viegas2007}, and D3
+\citep{bostock2011d3}. That is what people usually associate with
+interactive graphics.
 
-Linked graphics is more tricky - it allows changes across different displays as well as across different aggregation levels of the data. For example, suppose we have a scatterplot of the variable
-$Y$ versus $X$, and a histogram of $Z$ (all three variables
-are from the same dataset); when we highlight a subset of points in the scatterplot,
-and we need to show the distribution of the subset of $Z$ in the histogram as well.
-The key question is how to let the plots be aware of each other's changes, and respond
-both automatically and immediately.
+Linked graphics is more tricky - it allows changes across different displays
+as well as across different aggregation levels of the data. For example,
+suppose we have a scatterplot of the variable $Y$ versus $X$, and a
+histogram of $Z$ (all three variables are from the same dataset); when we
+highlight a subset of points in the scatterplot, and we need to show the
+distribution of the subset of $Z$ in the histogram as well. The key question
+is how to let the plots be aware of each other's changes, and respond both
+automatically and immediately.
 
 \hh{There is an editorial from JCGS by Buja and Swqyne called `What is interactive?' - cite it and paraphrase it.}
 
