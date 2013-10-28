@@ -138,13 +138,18 @@ be difficult to do via direct manipulation.
 \hh{Graham Wills has several publications on interactive graphics that include definitions and discussion on reaction time. We should cite him and also include }
 
 A number of standalone systems for interactive statistical graphics exist.
-Early systems include PRIM-9, an interactive computer graphics system to picture, rotate, isolate and mask data in up to 9 dimensions \citep{prim9}.
-\hh{This needs quite a bit of extension, LISP is still missing, as is Maindonald and some of Oldford's  - we should also move some of the discussion from section 4 to here.}
-More recent packages include
-XGobi and GGobi \citep{swayne2003,cook07}, MANET \citep{unwin96}
-and Mondrian \citep{theus02}, which support interactive displays
-of multivariate data, but they lack the extensibility, and tight integration
-with modeling that R furnishes.
+Early systems include PRIM-9, an interactive computer graphics system to
+picture, rotate, isolate and mask data in up to 9 dimensions \citep{prim9}.
+Data Desk \citep{velleman1988} and LISP-STAT \citep{tierney2009} provided
+tight integration with interactive graphics as well as numerical modeling.
+In particular, LISP-STAT is also a programmable environment like R.
+
+\hh{This needs quite a bit of extension, missing Maindonald and some of Oldford's  - we should also move some of the discussion from section 4 to here.}
+
+More recent packages include XGobi and GGobi \citep{swayne2003,cook07},
+MANET \citep{unwin96} and Mondrian \citep{theus02}, which support
+interactive displays of multivariate data, but they lack the extensibility,
+and tight integration with modeling that R furnishes.
 
 One of the big challenges in the development of interactive statistical applications is to resolve a user's action on the data level. This is sometimes referred to as the `plumbing' of interactice graphics
 \citep{buja1988,wickham2009plumbing}.
