@@ -258,14 +258,18 @@ statistical graphics.
 
 \section{Reactive programming}
 
-Our goal is to automatically notify the view whenever there is a change
-in the model. For an application of interactive graphics, there are
-two types of objects in the model:
+Our goal is to automatically notify the view whenever there is a change in
+the model. For an application of interactive graphics in the \texttt
+{cranvas} package, there are two types of objects in the model:
+
 \begin{itemize}
+
 \item  data to be presented in the plots; it is often of a tabular form like
-the data frame in R
+data frames in R
+
 \item  meta data to store additional information of the plots such as
-the axis limits; it is irregular like a list
+the axis limits; it is irregular like a list in R
+
 \end{itemize}
 There are two approaches to making them reactive, respectively. We
 can use \emph{mutaframes} \citep{R-plumbr} for the data object, and
