@@ -314,20 +314,24 @@ reactiveBrushed=1:4 # brush the first four points
 reactiveBrushed=10:28 # brush points from 10th to 28th
 @
 
-Now our only task is to assign indices of the brushed points to \texttt{reactiveBrushed},
-since the plot will be updated automatically. A real interactive graphics
-system is more complicated that the above toy example, but it shows
-the foundation of the pipeline. There are two kinds of interactive
-objects in cranvas, as explained in the next two sections.
+Now our only task is to assign indices of the brushed points to \texttt
+{reactiveBrushed}, since the plot will be updated automatically. A real
+interactive graphics system is more complicated that the above toy example,
+but it shows the foundation of the pipeline. The two kinds of interactive
+objects in \textbf{cranvas} are explained in the next two sections,
+respectively.
 
 
 \subsection{Mutaframes}
-Mutaframes are extensions of R data frames, that are being made mutable. This means that changes to its elements can be made anywhere regardless of the current environment. By comparison,
-a data frame can only be modified in the environment in which it was
-created, unless we use the non-local assignment operator \texttt{<\textcompwordmark{}<-}.
-The difference is highlighted in the example below:
 
-<<mf-mutable,package=library(methods)>>=
+Mutaframes are extensions to R data frames, that are being made mutable.
+This means that changes to its elements can be made anywhere regardless of
+the current environment. By comparison, a data frame can only be modified in
+the environment in which it was created, unless we use the non-local
+assignment operator \texttt{<\textcompwordmark{}<-}. The difference is
+highlighted in the example below:
+
+<<mf-mutable>>=
 library(plumbr)
 mf = mutaframe(x=1:2*pi) # a mutaframe
 df = data.frame(x=1:2*pi) # a normal data frame
