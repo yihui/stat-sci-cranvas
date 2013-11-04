@@ -389,6 +389,13 @@ clusters. Watch the video online at \url{http://cranvas.org/examples/qtour.html}
 \label{tour}}
 \end{figure}
 
+Interactivity of a mutaframe can be propagated to its subsets, and this
+allows us to build multiple applications based on one mutaframe and its
+offsprings. For instance, we can select a subset of points in a scatterplot,
+obtain their indices, and use the indices to subset the original mutaframe
+to draw a new plot. Then the new plot is naturally connected with the
+original plot: when we interact with the new plot, the interaction will be
+passed to the original plot, and vice versa.
 
 \subsection{Reference classes}
 
