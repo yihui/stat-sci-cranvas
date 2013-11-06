@@ -118,14 +118,18 @@ instance, Gapminder \citep{RJ2009}, ManyEyes \citep{viegas2007}, and D3
 \citep{bostock2011d3}. That is what people usually associate with
 interactive graphics.
 
-Linked graphics is more tricky - it allows changes across different displays
-as well as across different aggregation levels of the data. For example,
-suppose we have a scatterplot of the variable $Y$ versus $X$, and a
+Linked graphics is more tricky --- it allows changes across different
+displays as well as across different aggregation levels of the data. For
+example, suppose we have a scatterplot of the variable $Y$ versus $X$, and a
 histogram of $Z$ (all three variables are from the same dataset); when we
 highlight a subset of points in the scatterplot, and we need to show the
 distribution of the subset of $Z$ in the histogram as well. The key question
 is how to let the plots be aware of each other's changes, and respond both
-automatically and immediately.
+automatically and immediately. There are several types of linking between
+plots, such as one-to-one linking, categorical linking, and so on; see \citet
+{hurley1988}, \citet{stuetzle1987}, and \citet{mcdonald1990} for some early
+demonstrations and implementations. We will show how linking is related to
+and achieved by reactive programming later in this paper.
 
 The term ``interactive graphics'' can be ambiguous, as discovered by \citet
 {swayne1999}: it may imply the direct manipulation of the graph itself,
@@ -136,56 +140,91 @@ the binwidth of a histogram through a slider, or brush all the outliers a
 scatterplot using command line based a certain numeric criterion, which can
 be difficult to do via direct manipulation.
 
-\hh{Graham Wills has several publications on interactive graphics that include definitions and discussion on reaction time. We should cite him and also include }
+\hh{Cite Graham Wills on reaction time and mention the speed of Qt}
 
 A number of standalone systems for interactive statistical graphics exist.
 Early systems include PRIM-9, an interactive computer graphics system to
 picture, rotate, isolate and mask data in up to 9 dimensions \citep{prim9}.
-Data Desk \citep{velleman1988} and LISP-STAT \citep{tierney2009} provided
+Data Desk \citep{velleman1988} and LISP-STAT \citep{tierney1990} provided
 tight integration with interactive graphics as well as numerical modeling.
-In particular, LISP-STAT is also a programmable environment like R.
-
-\hh{This needs quite a bit of extension, missing Maindonald and some of Oldford's  - we should also move some of the discussion from section 4 to here.}
+In particular, LISP-STAT is also a programmable environment like R \citep
+{R2013}, but unfortunately it has been quite inert nowadays and R seems to
+be a much more popular choice. \citet{tierney2005} mentioned a few
+approaches towards programmable interactive graphics in LISP-STAT, which
+were not implemented due to limitations of toolkits, but will be relatively
+straightforward in the framework of R and Qt \citep{Qt}.
 
 More recent packages include XGobi and GGobi \citep{swayne2003,cook07},
 MANET \citep{unwin96} and Mondrian \citep{theus02}, which support
 interactive displays of multivariate data, but they lack the extensibility,
-and tight integration with modeling that R furnishes.
+and tight integration with modeling that R furnishes. The R package iplots
+\citep{R-iplots} provides high interaction statistical graphics; it was
+written in Java, and communicates with R through the rJava package.
 
-One of the big challenges in the development of interactive statistical applications is to resolve a user's action on the data level. This is sometimes referred to as the `plumbing' of interactice graphics
-\citep{buja1988,wickham2009plumbing}.
-\hh{Discuss the pipeline as the basis for communication between plots.}
+One of the big challenges in the development of interactive statistical
+applications is to resolve a user's action on the data level. This is
+sometimes referred to as the `plumbing' of interactice graphics. \citet
+{buja1988} gave a structure of a viewing pipeline for dynamic scatter plots,
+and the some components of the pipeline are no longer a concern today, such
+as the so-called ``window-to-viewport'' transformation, because graphics
+toolkits like Qt can take care of such low-level details automatically.
+\citet{wickham2009plumbing} outlined a more general pipeline for
+interactive graphics, but it did not cover implementation details, which is
+the focus of our paper and we believe reactive programming will facilitate
+the pipeline.
 
-\hh{We need a good pipeline picture outlining the plumbing of cranvas. This is the picture that we can come back to in the MVC discussion and later in the cranvas example.}
+\begin{figure}
+\includegraphics[width=\textwidth]{figure/diagram3}
 
-In following sections, we start with the
-discussion of the classical MVC design, and show the role of reactive programming
-in designing an interactive graphics system.
+\caption{A part of the pipeline in the \textbf{cranvas} package: it shows
+how plots are linked to each other as well as the data source. \label
+{fig:pipeline}}
 
-\section{The MVC Architecture}
+\end{figure}
 
-The Model/View/Controller (MVC) triple is a software architecture pattern
-first described by \citet{Krasner1988} and invented by Trygve Reenskaug in
-the 1970's.
-% \hh{What are the architecture patterns used in early implementations of
-% interactive statistical gaphics? Could you give them a name?}
-It is widely used in GUI (Graphical User Interface) applications, including
-web applications \citep{leff2001web}. The main reason for its popularity is
-because it minimizes the dependencies between  different components of an
-application.
+The R package \textbf{cranvas} \citep{cranvas} is an interactive graphics
+system built under the classical Model/View/Controller (MVC) architecture
+(Section \ref{sec:mvc}) and adopts the reactive programming paradigm
+(Section \ref{sec:reactive}) to achieve interactivity. Figure \ref
+{fig:pipeline} shows the basic pipeline in the \textbf{cranvas} package, and
+the most important components are mutaframes and meta data objects, which
+are ``reactive'' by design and we will explain in detail in Section \ref
+{sec:reactive}. The pipeline starts with a data source (a mutaframe) as the
+central commander of the system. Any plot can modify the data source as we
+interact with the plot, and as soon as the mutaframe is modified, its
+reactive nature will propagate the changes to all other plots in the system
+automatically. On the other hand, each plot also has its own attributes,
+which should not be propagated out of itself, and that is why we have meta
+data in the system besides mutaframes. A meta data object is also reactive,
+but it is only linked to a specific plot. For instance, we can store the
+binwidth of a histogram in its meta data, and when we modify the binwidth,
+the histogram will respond automatically.
 
-For example, let us assume that the model component consists of a data transformation, such as a square-root or log transformation. The model does not depend on the view, but the view depends on the model in the sense, that if the data is changed or a different data transformation is chosen, the view has to be updated to reflect this change.
-%For example, the model component can be data transformation, and it
-%does not need to depend on the view -- the view depends on the model
-%in the sense that when the data is changed (e.g. from square-root
-%transformation to log transformation), the view will reflect the change.
-The model developer therefore never needs to deal with the representation of
-the data on the screen, as that is only the  task of the view.
+In following sections, we start with the discussion of the MVC design, which
+is also the main path that we follow in the design of \textbf{cranvas}.
+Then we add the reactive programming paradigm to the MVC architecture, and
+show its applications in an interactive graphics system.
 
-In a traditional MVC design, the controller sends commands to both
-the model and the view to update their states. Below is a minimal
-example on how to brush a scatterplot under the MVC design implemented
-in R \citep{R2013}:
+\section{The MVC Architecture}\label{sec:mvc}
+
+The Model/View/Controller triple is a software architecture pattern first
+described by \citet{Krasner1988} and invented by Trygve Reenskaug in the
+1970's. It is widely used in GUI (Graphical User Interface) applications,
+including web applications \citep{leff2001web}. The main reason for its
+popularity is because it minimizes the dependencies between different
+components of an application.
+
+For example, let us assume that the model component consists of a data
+transformation, such as a square-root or log transformation. The model does
+not depend on the view, but the view depends on the model in the sense, that
+if the data is changed or a different data transformation is chosen, the
+view has to be updated to reflect this change. The model developer therefore
+never needs to deal with the representation of the data on the screen, as
+that is only the task of the view.
+
+In a traditional MVC design, the controller sends commands to both the model
+and the view to update their states. Below is a minimal example on how to
+brush a scatterplot under the MVC design implemented in R:
 
 <<mvc-example>>=
 brushed = logical(nrow(cars)) # status of the brush indices
@@ -206,13 +245,12 @@ controller = function(i) {
 }
 @
 
-When the user brushes the scatterplot, we can obtain the indices of
-the points under the brush rectangle (denoted by \texttt{i} in the
-code above). Then we pass the indices to the model to change the brush
-status (the vector \texttt{brushed}) and redraw the plot. Below we
-brush the first four points and then points from the 10th to 28th. Normally
-we get the indices of points from the mouse input, and here is only
-an emulation.
+When the user brushes the scatterplot, we can obtain the indices of the
+points under the brush rectangle (denoted by \texttt{i} in the code above).
+Then we pass the indices to the model to change the brush status (the vector
+\texttt{brushed}) and redraw the plot. Below we brush the first four points
+and then points from the 10th to 28th. Normally we get the indices of points
+from the mouse input, and here is only an emulation.
 
 \begin{figure}
 <<mvc-brush, fig.width=3.5, fig.height=3.5, fig.show='hold', out.width='.49\\linewidth', par=TRUE, dev='tikz', cache=TRUE>>=
@@ -220,25 +258,25 @@ controller(1:4)  # the first four points
 controller(10:28)  # points from 10th to 28th
 @
 
-\caption{Brush a scatterplot using the MVC design: brush the first four points (left),
-then brush all points from the 10th to 28th. The dashed rectangle denotes the ``brush'',
-which is normally created by dragging the cursor over the points.
-The \texttt{cars} data
-is a built-in dataset in R.\label{fig:mvc-brush}}
+\caption{Brush a scatterplot using the MVC design: brush the first four
+points (left), then brush all points from the 10th to 28th. The dashed
+rectangle denotes the ``brush'', which is normally created by dragging the
+cursor over the points. The \texttt{cars} data is a built-in dataset in R.
+\label{fig:mvc-brush}}
+
 \end{figure}
 
 
-By decoupling the system into three components, we can reuse them
-in other places in the implementation. For example, we can call the model or the view separately
-without modifying their source code.
+By decoupling the system into three components, we can reuse them in other
+places in the implementation. For example, we can call the model or the view
+separately without modifying their source code.
 
-The problem with the traditional MVC design is that we have to be
-explicit about updating the model and the view in the controller.
-In the context of interactive graphics, this can be a burden for developers.
-For instance, when there are multiple views in the system, the controller
-must notify all views explicitly of all of the changes in the system. When a
-new view is added to the system, the  controller
-must be updated accordingly.
+The problem with the traditional MVC design is that we have to be explicit
+about updating the model and the view in the controller. In the context of
+interactive graphics, this can be a burden for developers. For instance,
+when there are multiple views in the system, the controller must notify all
+views explicitly of all of the changes in the system. When a new view is
+added to the system, the  controller must be updated accordingly.
 
 Ideally we want all views to respond to changes in the model automatically
 so there is no additional step of updating the views after the model is
@@ -246,20 +284,25 @@ changed. This can be achieved by reactive programming, an object-oriented
 programming paradigm based on an event-listener model and targeted at the
 propagation of changes in data flows. We attach listeners on data objects
 such that (different) events will be triggered corresponding to changes in
-data. In the above example, the plot will be updated as soon as object
+data. In the above example, the plot will be updated as soon as the object
 \texttt{brushed} is modified without the need to explicitly calling \texttt
 {view()}. This makes it much easier to express the logic of interactive
 graphics. In this paper we will discuss how it works as well as its
-application in interactive graphics. \citet{shiny} is another application of
-reactive programming in the R community, which makes it easy to interact
-between HTML elements and R, but it does not have a specific emphasis on
-statistical graphics.
+application in interactive graphics. Shiny \citep{shiny} is another
+application of reactive programming in the R community, which makes it easy
+to interact between HTML elements and R, but it does not have a specific
+emphasis on statistical graphics.
 
+There have been a number of R packages attempting to solve similar problems
+as we tried to solve in \textbf{cranvas}. For example, \citet{Whalen05}
+built an interactive GUI system using the MVC pattern to explore linked
+data. The GUI was based on the RGtk package (later evolved into RGtk2 \citep
+{RGtk2}), and MVC was implemented in the MVCClass package.
 
-\section{Reactive programming}
+\section{Reactive programming}\label{sec:reactive}
 
 Our goal is to automatically notify the view whenever there is a change in
-the model. For an application of interactive graphics in the \texttt
+the model. For an application of interactive graphics in the \textbf
 {cranvas} package, there are two types of objects in the model:
 
 \begin{itemize}
@@ -298,24 +341,24 @@ reactiveModel = local({
     b
   }
 })
-makeActiveBinding('reactiveBrushed', reactiveModel, env = globalenv())
+makeActiveBinding('reactiveBrush', reactiveModel, env = globalenv())
 @
 
-We bind a function \texttt{reactiveModel()} to the variable \texttt{reactiveBrushed}
-via \texttt{makeActiveBinding()} in base R. When we assign new values
-to \texttt{reactiveBrushed}, the function defined in \texttt{reactiveModel()}
+We bind a function \texttt{reactiveModel()} to the variable \texttt{reactiveBrush}
+through \texttt{makeActiveBinding()} in base R. When we assign new values
+to \texttt{reactiveBrush}, the function defined in \texttt{reactiveModel()}
 will be called: inside the function, the logical variable \texttt{b}
 is modified by the indices \texttt{i} and the view is updated accordingly.
 The two lines below achieve the same goal as the MVC example in Figure
 \ref{fig:mvc-brush}.
 
 <<active-test, eval=FALSE>>=
-reactiveBrushed=1:4 # brush the first four points
-reactiveBrushed=10:28 # brush points from 10th to 28th
+reactiveBrush=1:4 # brush the first four points
+reactiveBrush=10:28 # brush points from 10th to 28th
 @
 
 Now our only task is to assign indices of the brushed points to \texttt
-{reactiveBrushed}, since the plot will be updated automatically. A real
+{reactiveBrush}, since the plot will be updated automatically. A real
 interactive graphics system is more complicated that the above toy example,
 but it shows the foundation of the pipeline. The two kinds of interactive
 objects in \textbf{cranvas} are explained in the next two sections,
@@ -378,53 +421,66 @@ of continuity is preserved for the observer. This continuity allows us to
 identify clusters as groups of points that share a common fate \citep[e.g.]
 []{wolfe2012sensation}. Internally, the movie-like view is upheld by
 repeated changes to the $X$ and $Y$ values displayed, which are propagated
-to the view. Simultaneously, changes are made to a second mutaframe
-containing information about the axis and labels.
+to the view.
 
 \begin{figure}
 \includegraphics[width=0.6\linewidth, height=0.6\linewidth]{figure/tour}
 
-\caption{Grand tour of through the flea data. The data separate into three
-clusters. Watch the video online at \url{http://cranvas.org/examples/qtour.html}.
-\label{tour}}
+\caption{A grand tour through the flea data. The points are separated into
+three clusters. Watch the video online at \url
+{http://cranvas.org/examples/qtour.html}. \label{tour}}
+
 \end{figure}
 
 Interactivity of a mutaframe can be propagated to its subsets, and this
 allows us to build multiple applications based on one mutaframe and its
-offsprings. For instance, we can select a subset of points in a scatterplot,
-obtain their indices, and use the indices to subset the original mutaframe
-to draw a new plot. Then the new plot is naturally connected with the
-original plot: when we interact with the new plot, the interaction will be
-passed to the original plot, and vice versa.
+offsprings \citep{hurley1988}. For instance, we can select a subset of
+points in a scatterplot, obtain their indices, and use the indices to subset
+the original mutaframe to draw a new plot. Then the new plot is naturally
+connected with the original plot: when we interact with the new plot, the
+interaction will be passed to the original plot, and vice versa.
 
 \subsection{Reference classes}
 
 R introduced reference classes since version 2.12 (thanks to John Chambers).
-This made it possible to create objects with fields that can be accessed by reference.
-A consequence of this feature is that such objects can be used for storing meta data
-in the graphics system, and the data can be easily modified outside of plotting functions.
-For instance, we store the axes limits in an object \texttt{meta} as \texttt{meta\$limits}
-(in other words, \texttt{limits} is a field of \texttt{meta}). After the plot has been
-drawn, we can still modify its limits via command line and the new limits will be
-available to the internal members of the plotting function. This is inconvenient,
-if not impossible, under the usual copy-on-modify semantics in R.
+This made it possible to create objects with fields that can be accessed by
+reference. A consequence of this feature is that such objects can be used
+for storing meta data in the graphics system, and the data can be easily
+modified outside of plotting functions. For instance, we store the axes
+limits in an object \texttt{meta} as \texttt{meta\$limits} (in other words,
+\texttt{limits} is a field of \texttt{meta}). After the plot has been drawn,
+we can still modify its limits via command line and the new limits will be
+available to the internal members of the plotting function. This is
+inconvenient, if not impossible, under the usual copy-on-modify semantics in
+R.
 
-What is more important in our system is the extension by the \texttt{objectSignals} package
-\citep{objectSignals} based on reference classes. This packages allows us to attach
-listeners on reference classes objects. This is similar to mutaframes described before,
-but we can create objects of arbitrary structures. The difference between mutaframes and
-signal objects is the same as the difference between data frames and lists in R.
+What is more important in our system is the extension by the \textbf
+{objectSignals} package \citep{objectSignals} based on reference classes.
+The objects created from this package are called ``signal objects'', which
+are basically special reference classes objects with listeners attached on
+them. This is similar to mutaframes described before, but we can create
+objects of arbitrary structures. The difference between mutaframes and
+signal objects is similar to the difference between data frames and lists in
+R.
 
+\begin{figure}
+\includegraphics[width=.7\textwidth]{figure/diagram1}
+\includegraphics[width=.9\textwidth]{figure/diagram2}
+\end{figure}
 
-\section{Application}
+\section{An Anatomy of Interactions}
 
-In this section, we show some applications in the \textbf{cranvas} package
-\citep{cranvas}. The data infrastructure is based on mutaframes and
-reference classes, as introduced in the previous section. The actual drawing
-is based on the packages \textbf{qtbase} \citep{qtbase} and \textbf{qtpaint}
-\citep{qtpaint}, which connect R to Qt \citep{verzani2012}.
+In this section, we show how some common interactions, including brushing,
+zooming, and querying, etc, were implemented in the \textbf{cranvas}
+package. The data infrastructure is based on mutaframes and reference
+classes, as introduced in the previous section. The actual drawing is based
+on the packages \textbf{qtbase} \citep{qtbase} and \textbf{qtpaint} \citep
+{qtpaint}, which connect R to Qt \citep{verzani2012}.
 
-Interaction happens on multiple levels. The most common forms of interaction with a display are listed below in decreasing order of immediacy with which this interaction between the user and the display happens:
+Interaction happens on multiple levels. The most common forms of interaction
+with a display are listed below in decreasing order of immediacy with which
+this interaction between the user and the display happens:
+
 \begin{description}
 
 \item [\bf Direct manipulation] of graphical objects \citep{becker1987, wills1999}
@@ -487,6 +543,7 @@ interacted with the graphical object.
 
 \subsection{Meta data}
 
+% supporting info
 Graphical displays are data summaries, and as such they require some level
 of aggregation of the original data. This information is stored in form of
 meta data. Meta data is plot specific. Not only are data values stored to
@@ -601,13 +658,7 @@ material.
 
 \section{Discussion and Conclusions}
 
-There have been a number of R packages attempting to solve similar problems as we presented. For example,
-\citet{Whalen05} built an interactive GUI system using the MVC pattern to
-explore linked data. The GUI was based on the RGtk package  \citep[later
-evolved into RGtk2][]{RGtk2}, and MVC was implemented in the
-MVCClass package. The iplots package \citep{R-iplots} provides high interaction statistical graphics, written in Java.
-
-The \texttt{cranvas} package has a clear distinction with these packages in terms of
+The \textbf{cranvas} package has a clear distinction with these packages in terms of
 the underlying data structure. The plotting pipeline is expressed and attached to
 the data as well as the meta data. Using the reactive programming model, the user
 does not need to pay attention to the whole pipeline, which makes it easy to extend
@@ -615,14 +666,14 @@ this system. For example, implementing the tour is nothing but to draw a scatter
 (of projected variables), and keep on modifying the data, because the data will
 update the scene automatically upon changes.
 
-The future work of \texttt{cranvas} is to include more plot types such as hexbin plots
+The future work of \textbf{cranvas} is to include more plot types such as hexbin plots
 and scatterplot matrices, and allow users to define how the system reacts to changes.
 
 % what reactive programming enables cranvas to do and other systems cannot
 % easily do is interaction from command line besides direct manipulation
 
 \section*{Supplementary material}
-The \texttt{cranvas} package is available on GitHub at \url{https://github.com/ggobi/cranvas}.
+The \textbf{cranvas} package is available on GitHub at \url{https://github.com/ggobi/cranvas}.
 We have movies showing some interactions that are available through the website
 \url{http://cranvas.org}.
 
