@@ -3,7 +3,6 @@
 \usepackage[utf8]{inputenc}
 \usepackage{color}
 \usepackage{url}
-\usepackage{media9}
 \usepackage[authoryear]{natbib}
 \usepackage[unicode=true,pdfusetitle,
  bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
@@ -20,6 +19,7 @@
 library(methods)
 library(knitr)
 options(replace.assign=TRUE, reindent.spaces=2, width=70)
+opts_chunk[['set']](error=FALSE)
 knit_hooks$set(document=hook_movecode, par = function(before, options, envir) {
   if (before && options$fig.show != "none") {
     par(mar = c(4, 4, 0.1, 0.1), cex.lab = 0.95, cex.axis = 0.9,
@@ -57,9 +57,9 @@ University; 2413 Snedecor Hall, Ames 50011, IA, USA. \printead{e2,u2}}
 
 \begin{abstract}
 One of the big challenges of developing interactive statistical applications
-is the management of the data pipeline, which typically consists of many
-modules. The user's interactions needs to be propagated through these
-modules and finally be reflected in the output representation. Each
+is the management of the data pipeline, which controls transformations from
+data to plot. The user's interactions needs to be propagated through these
+modules and reflected in the output representation at a fast pace. Each
 individual module may be easy to develop and manage, but the dependency
 structure can be quite challenging. The MVC (Model/View/Controller) pattern
 is an attempt to solve the problem by separating the user's interaction from
@@ -69,7 +69,8 @@ applicability to interactive graphics. Under this paradigm, developers
 benefit from the separation of user interaction from the graphical
 representation, which makes it easier for users and developers to extend
 interactive applications. The implementation is done in the R package \textbf
-{cranvas}, which is freely available on Github.
+{cranvas}, which is freely available on GitHub and the main developers
+include the authors of this paper.
 \end{abstract}
 
 \begin{keyword}
@@ -80,26 +81,29 @@ interactive applications. The implementation is done in the R package \textbf
 \end{frontmatter}
 
 
+%==============================================================================%
 \section{Introduction}
-
-%\hh{This needs a gentler introduction -- }
-%\hh{
-%Start with a discussion of interactive graphics -- where does it come from, }
-
-% ---
-% I was assuming the audience should be very familiar with this (Yihui)
-% ---
+%==============================================================================%
 
 Interactive graphics progresses us beyond the limitations of static
 statistical displays, in particular, for exploring high-dimensional data.
 With a static image, we can only see one aspect of the data at one time.
 Interactive graphics allows us to inspect data dynamically from multiple
 angles. For example, we may examine the distribution of a variable from a
-histogram, and change its binwidth on the fly without having to manually
-redraw the plot again and again according to different values of the binwidth.
+histogram, and change its bin-width on the fly without having to manually
+redraw the plot again and again according to different values of the bin-width.
 
+The term ``interactive graphics'' can be ambiguous, as disclosed by \citet
+{swayne1999} in an editorial of \textit{Computational Statistics}: it may
+imply the direct manipulation of the graph itself, manipulation of the graph
+controls, or even the command-line interaction with graphs. Nowadays we
+primarily mean the direct manipulation on graphs, but other meanings still
+have their usefulness. For instance, we may change the bin-width of a
+histogram through a slider, or brush all the outliers a scatterplot using
+command line based a certain numeric criterion, which can be difficult to do
+via direct manipulation.
 
-The main tasks that an interactive graphics system is supposed to support are:
+The main tasks that an interactive graphics system should support are:
 
 \begin{enumerate}
 
@@ -107,40 +111,33 @@ The main tasks that an interactive graphics system is supposed to support are:
   (brushing, zooming, panning, deletion) and obtaining additional
   information (querying graphical elements);
 
-  \item Linking between different displays of the same dataset or connected
-  datasets.
+  \item Linking between different displays of the same dataset or related
+  datasets.  For example, suppose we have a scatterplot of the variable $Y$
+  versus $X$, and a histogram of $Z$ (all three variables are from the same
+  dataset); when we highlight a subset of points in the scatterplot, and we
+  need to show the distribution of the subset of $Z$ in the histogram as well.
 
 \end{enumerate}
 
 The first set of tasks is easier to solve -- there are a lot of web
-applications that allow various single display interactions based on, for
-instance, Gapminder \citep{RJ2009}, ManyEyes \citep{viegas2007}, and D3
-\citep{bostock2011d3}. That is what people usually associate with
+applications that allow various single display interactions, for instance,
+Gapminder \citep{RJ2009}, ManyEyes \citep{viegas2007}, JMP \citep{jmp}, and
+D3 \citep {bostock2011d3}. That is what people usually associate with
 interactive graphics.
 
-Linked graphics is more tricky --- it allows changes across different
-displays as well as across different aggregation levels of the data. For
-example, suppose we have a scatterplot of the variable $Y$ versus $X$, and a
-histogram of $Z$ (all three variables are from the same dataset); when we
-highlight a subset of points in the scatterplot, and we need to show the
-distribution of the subset of $Z$ in the histogram as well. The key question
-is how to let the plots be aware of each other's changes, and respond both
-automatically and immediately. There are several types of linking between
-plots, such as one-to-one linking, categorical linking, and so on; see \citet
-{hurley1988}, \citet{stuetzle1987}, and \citet{mcdonald1990} for some early
-demonstrations and implementations. We will show how linking is related to
-and achieved by reactive programming later in this paper.
+% TODO: Jason Dykes reference
 
-The term ``interactive graphics'' can be ambiguous, as discovered by \citet
-{swayne1999}: it may imply the direct manipulation of the graph itself,
-manipulation of the graph controls, or even the command-line interaction
-with graphs. Nowadays we primarily mean the direct manipulation on graphs,
-but other meanings still have their usefulness. For instance, we may change
-the binwidth of a histogram through a slider, or brush all the outliers a
-scatterplot using command line based a certain numeric criterion, which can
-be difficult to do via direct manipulation.
+Linked graphics are less common --- it allows changes across different
+displays as well as across different aggregation levels of the data. The key
+difficulty is how to let the plots be aware of each other's changes, and
+respond both automatically and immediately. There are several types of
+linking between plots, one-to-one linking, categorical linking, and
+geographical linking; see \citet {hurley1988}, \citet{stuetzle1987}, and
+\citet{mcdonald1990} for some early demonstrations and implementations. We
+will show how linking is related to and achieved by reactive programming
+later in this paper.
 
-\hh{Cite Graham Wills on reaction time and mention the speed of Qt}
+% TODO: Cite Graham Wills on reaction time and mention the speed of Qt
 
 A number of standalone systems for interactive statistical graphics exist.
 Early systems include PRIM-9, an interactive computer graphics system to
@@ -148,89 +145,99 @@ picture, rotate, isolate and mask data in up to 9 dimensions \citep{prim9}.
 Data Desk \citep{velleman1988} and LISP-STAT \citep{tierney1990} provided
 tight integration with interactive graphics as well as numerical modeling.
 In particular, LISP-STAT is also a programmable environment like R \citep
-{R2013}, but unfortunately it has been quite inert nowadays and R seems to
-be a much more popular choice. \citet{tierney2005} mentioned a few
-approaches towards programmable interactive graphics in LISP-STAT, which
-were not implemented due to limitations of toolkits, but will be relatively
-straightforward in the framework of R and Qt \citep{Qt}.
+{R2013}, but unfortunately today R is the more popular choice. \citet
+{tierney2005} described a few desirable approaches towards programmable
+interactive graphics, which were not implemented in LISP-STAT due to
+limitations of the toolkit. These are all relatively straightforward in the
+framework of R and Qt \citep{Qt}.
 
-More recent packages include XGobi and GGobi \citep{swayne2003,cook07},
+The software systems include XGobi and GGobi \citep{swayne2003,cook07},
 MANET \citep{unwin96} and Mondrian \citep{theus02}, which support
-interactive displays of multivariate data, but they lack the extensibility,
-and tight integration with modeling that R furnishes. The R package iplots
-\citep{R-iplots} provides high interaction statistical graphics; it was
-written in Java, and communicates with R through the rJava package.
+interactive displays of multivariate data, but lack extensibility, and a
+tight integration with modeling in R. The \textbf{rggobi} package \citep
+{rggobi} is an interface between R and GGobi based on the GTK+ toolkit. The
+\textbf{iplots} package \citep {R-iplots} provides high interaction
+statistical graphics; it is written in Java using the Swing toolkit, and
+communicates with R through the \textbf{rJava} package.
+
+% TODO: justify why cranvas instead of iplots
 
 One of the big challenges in the development of interactive statistical
 applications is to resolve a user's action on the data level. This is
-sometimes referred to as the `plumbing' of interactice graphics. \citet
-{buja1988} gave a structure of a viewing pipeline for dynamic scatter plots,
-and the some components of the pipeline are no longer a concern today, such
-as the so-called ``window-to-viewport'' transformation, because graphics
-toolkits like Qt can take care of such low-level details automatically.
-\citet{wickham2009plumbing} outlined a more general pipeline for
-interactive graphics, but it did not cover implementation details, which is
-the focus of our paper and we believe reactive programming will facilitate
-the pipeline.
+sometimes referred to as the ``plumbing'' of interactive graphics. \citet
+{buja1988} introduced a structure of a viewing pipeline for dynamic scatter
+plots. Some components of the pipeline are no longer necessary, such as the
+so-called ``window-to-viewport'' transformation, because graphics toolkits
+like Qt can take care of such low-level details automatically. \citet
+{wickham2009plumbing} outlined a more general pipeline for interactive
+graphics, but it did not cover implementation details, which is the focus of
+this paper.
+
+% TODO: more on Buja pipeline
 
 \begin{figure}
 \includegraphics[width=\textwidth]{figure/diagram3}
 
-\caption{A part of the pipeline in the \textbf{cranvas} package: it shows
-how plots are linked to each other as well as the data source. \label
-{fig:pipeline}}
+\caption{A representation of the pipeline in the \textbf{cranvas} package.
+It shows how plots are linked to each other as well as the data source.
+Elements are added to the data to facilitate the interaction. Arrows with
+solid lines indicate R functions that draw the plots. \label{fig:pipeline}}
 
 \end{figure}
 
 The R package \textbf{cranvas} \citep{cranvas} is an interactive graphics
 system built under the classical Model/View/Controller (MVC) architecture
-(Section \ref{sec:mvc}) and adopts the reactive programming paradigm
-(Section \ref{sec:reactive}) to achieve interactivity. Figure \ref
-{fig:pipeline} shows the basic pipeline in the \textbf{cranvas} package, and
-the most important components are mutaframes and meta data objects, which
-are ``reactive'' by design and we will explain in detail in Section \ref
-{sec:reactive}. The pipeline starts with a data source (a mutaframe) as the
-central commander of the system. Any plot can modify the data source as we
-interact with the plot, and as soon as the mutaframe is modified, its
-reactive nature will propagate the changes to all other plots in the system
-automatically. On the other hand, each plot also has its own attributes,
-which should not be propagated out of itself, and that is why we have meta
-data in the system besides mutaframes. A meta data object is also reactive,
-but it is only linked to a specific plot. For instance, we can store the
-binwidth of a histogram in its meta data, and when we modify the binwidth,
-the histogram will respond automatically.
+and adopts the reactive programming paradigm to achieve interactivity.
+Figure \ref {fig:pipeline} shows a basic pipeline in the \textbf{cranvas}
+package, and its most important components, mutaframes and meta data
+objects, which are ``reactive'' by design. The pipeline starts with a data
+source (a mutaframe) as the central commander of the system. Any plot can
+modify the data source as we interact with the plot, and as soon as the
+mutaframe is modified, its reactive nature will propagate the changes to all
+other plots in the system automatically. In addition, each plot also has its
+own attributes, which should not be propagated out of itself, and that is
+why we have meta data in the system besides mutaframes. A meta data object
+is also reactive, but it is only linked to a specific plot. For instance, we
+can store the bin-width of a histogram in its meta data, and when we modify
+the bin-width, the histogram will respond automatically.
 
-In following sections, we start with the discussion of the MVC design, which
-is also the main path that we follow in the design of \textbf{cranvas}.
-Then we add the reactive programming paradigm to the MVC architecture, and
-show its applications in an interactive graphics system.
+The paper is organized as follows. We start with the discussion of the MVC
+design. Section \ref{sec:reactive} describes the reactive programming
+paradigm relative to the MVC architecture, using \textbf{cranvas} as an
+example. Section \ref{sec:interaction} provides specific examples of how
+interaction is realized.
 
+%==============================================================================%
 \section{The MVC Architecture}\label{sec:mvc}
+%==============================================================================%
 
-The Model/View/Controller triple is a software architecture pattern first
-described by \citet{Krasner1988} and invented by Trygve Reenskaug in the
-1970's. It is widely used in GUI (Graphical User Interface) applications,
-including web applications \citep{leff2001web}. The main reason for its
-popularity is because it minimizes the dependencies between different
-components of an application.
+MVC is a software architecture design first invented by Trygve Reenskaug in
+the 1970's, and described in detail by \citet{Krasner1988}. It is widely
+used in GUI (Graphical User Interface) applications, including web
+applications \citep{leff2001web}. There have been a number of R packages
+utilizing the MVC architecture. For example, \citet{Whalen05} built an
+interactive GUI system using the MVC design to explore linked data. The GUI
+was based on the \textbf{RGtk} package (later evolved into \textbf{RGtk2}
+\citep{RGtk2}), and MVC was implemented in the \textbf{MVCClass} package.
 
-For example, let us assume that the model component consists of a data
-transformation, such as a square-root or log transformation. The model does
-not depend on the view, but the view depends on the model in the sense, that
-if the data is changed or a different data transformation is chosen, the
-view has to be updated to reflect this change. The model developer therefore
-never needs to deal with the representation of the data on the screen, as
-that is only the task of the view.
+The main reason for the popularity of MVC is because it minimizes the
+dependencies between different components of an application. For example,
+let us assume that the model component consists of a data transformation,
+such as a square-root or log transformation. The model does not depend on
+the view, but the view depends on the model in the sense, that if the data
+is changed or a different data transformation is chosen, the view has to be
+updated to reflect this change. The model developer therefore never needs to
+deal with the representation of the data on the screen.
 
 In a traditional MVC design, the controller sends commands to both the model
-and the view to update their states. Below is a minimal example on how to
-brush a scatterplot under the MVC design implemented in R:
+and the view to update their states. Below is a minimal example in R code on
+how to brush a scatterplot under the MVC design:
 
 <<mvc-example>>=
-brushed = logical(nrow(cars)) # status of the brush indices
+brushed = rep(FALSE, nrow(cars)) # status of the brush indices
 model = function(i) {
   brushed[] <<- FALSE
-  # set the i-th element of the brush to TRUE
+  # set the i-th element to TRUE to highlight it
   brushed[i] <<- TRUE
 }
 view = function(b = brushed) {
@@ -248,9 +255,7 @@ controller = function(i) {
 When the user brushes the scatterplot, we can obtain the indices of the
 points under the brush rectangle (denoted by \texttt{i} in the code above).
 Then we pass the indices to the model to change the brush status (the vector
-\texttt{brushed}) and redraw the plot. Below we brush the first four points
-and then points from the 10th to 28th. Normally we get the indices of points
-from the mouse input, and here is only an emulation.
+\texttt{brushed}) and redraw the plot.
 
 \begin{figure}
 <<mvc-brush, fig.width=3.5, fig.height=3.5, fig.show='hold', out.width='.49\\linewidth', par=TRUE, dev='tikz', cache=TRUE>>=
@@ -261,14 +266,16 @@ controller(10:28)  # points from 10th to 28th
 \caption{Brush a scatterplot using the MVC design: brush the first four
 points (left), then brush all points from the 10th to 28th. The dashed
 rectangle denotes the ``brush'', which is normally created by dragging the
-cursor over the points. The \texttt{cars} data is a built-in dataset in R.
-\label{fig:mvc-brush}}
+cursor over the points. The \texttt{cars} data is a dataset in base R. It
+has been ordered first by \texttt{speed} and then \texttt{dist} in the
+increasing order, so the bottom-left point is the first observation in the
+data. \label{fig:mvc-brush}}
 
 \end{figure}
 
 
-By decoupling the system into three components, we can reuse them in other
-places in the implementation. For example, we can call the model or the view
+Decoupling the system into three components enables components to be
+accessed independently. For example, we can call the model or the view
 separately without modifying their source code.
 
 The problem with the traditional MVC design is that we have to be explicit
@@ -276,66 +283,75 @@ about updating the model and the view in the controller. In the context of
 interactive graphics, this can be a burden for developers. For instance,
 when there are multiple views in the system, the controller must notify all
 views explicitly of all of the changes in the system. When a new view is
-added to the system, the  controller must be updated accordingly.
+added to the system, the controller must be updated accordingly. Below is
+what we normally do when we add a new view to the system:
 
-Ideally we want all views to respond to changes in the model automatically
-so there is no additional step of updating the views after the model is
-changed. This can be achieved by reactive programming, an object-oriented
-programming paradigm based on an event-listener model and targeted at the
-propagation of changes in data flows. We attach listeners on data objects
-such that (different) events will be triggered corresponding to changes in
-data. In the above example, the plot will be updated as soon as the object
-\texttt{brushed} is modified without the need to explicitly calling \texttt
-{view()}. This makes it much easier to express the logic of interactive
-graphics. In this paper we will discuss how it works as well as its
-application in interactive graphics. Shiny \citep{shiny} is another
-application of reactive programming in the R community, which makes it easy
-to interact between HTML elements and R, but it does not have a specific
-emphasis on statistical graphics.
+<<mvc-multiple, eval=FALSE>>=
+view1 = function(b = brushed) {
+  plot(cars, pch = ifelse(b, 19, 21))
+}
+view2 = function(b = brushed) {
+  cars$dist = sqrt(cars$dist)  # based on transformed data
+  plot(cars, pch = ifelse(b, 19, 21))
+}
+controller = function(i) {
+  model(i)
+  view1()
+  view2()
+}
+@
 
-There have been a number of R packages attempting to solve similar problems
-as we tried to solve in \textbf{cranvas}. For example, \citet{Whalen05}
-built an interactive GUI system using the MVC pattern to explore linked
-data. The GUI was based on the RGtk package (later evolved into RGtk2 \citep
-{RGtk2}), and MVC was implemented in the MVCClass package.
+Reactive programming is an object-oriented programming paradigm based on an
+event-listener model and targeted at the propagation of changes in data
+flows. We attach listeners on data objects such that (different) events will
+be triggered corresponding to changes in data. In the above example, the
+plot will be updated as soon as the object \texttt{brushed} is modified
+without the need to explicitly call \texttt{view()}. This makes it much
+easier to express the logic of interactive graphics. We will discuss how it
+works as well as its application in \textbf{cranvas} in the next section.
+Shiny \citep{shiny} is another application of reactive programming in the R
+community, which makes it easy to interact between HTML elements and R, but
+it does not have a specific emphasis on statistical graphics.
 
+
+%==============================================================================%
 \section{Reactive programming}\label{sec:reactive}
+%==============================================================================%
 
-Our goal is to automatically notify the view whenever there is a change in
-the model. For an application of interactive graphics in the \textbf
-{cranvas} package, there are two types of objects in the model:
+To provide interactive graphics in \textbf{cranvas}, there are two types of
+objects:
 
 \begin{itemize}
 
-\item  data to be presented in the plots; it is often of a tabular form like
-data frames in R
+  \item data presented in the plots, often of a tabular form like data
+  frames in R
 
-\item  meta data to store additional information of the plots such as
-the axis limits; it is irregular like a list in R
+  \item meta data to store additional information of the plots such as the
+  axis limits; it is irregular like a list in R
 
 \end{itemize}
 
-There are two approaches to making them reactive, respectively. We can use
-\emph{mutaframes} \citep{R-plumbr} for the data object, and \emph{reference
-classes} \citep{Chambers2013} for the meta data. The fundamental technique
-underlying them is the \emph{active binding} in R, thanks to the work of the
-R core team (in particular, Luke Tierney). For details, see the
-documentation of \texttt{makeActiveBinding} in R. Both mutaframes and
-reference classes use active bindings to make elements inside them (such as
-data columns, or list members) reactive whenever they are modified.
+There are two approaches making objects reactive: \emph{mutaframes} \citep
+{R-plumbr} for the data object, and \emph{reference classes} \citep
+{Chambers2013} for the meta data. The fundamental technique underlying them
+is the \emph{active binding} in R, thanks to the work of the R Core team (in
+particular, Luke Tierney). For details, see the documentation of \texttt
+{makeActiveBinding} in R. Both mutaframes and reference classes use active
+bindings to make elements inside them (such as data columns, or list
+members) reactive whenever they are modified.
 
-Active bindings allow events (expressed as functions) to be attached
-on objects and these events are executed when objects are assigned
-new values. Below is an implementation with active bindings, to continue
-the MVC example before:
+Active bindings allow events (expressed as functions) to be attached on
+objects and these events are executed when objects are assigned new values.
+Below is an implementation with active bindings, expanding on the example
+code in the previous section:
 
 <<active-binding>>=
 reactiveModel = local({
-  b = logical(nrow(cars)) # initial status; all FALSE
+  b = rep(FALSE, nrow(cars)) # initial status; all FALSE
   function(i) {
     if (!missing(i)) {
       b[] <<- FALSE
-      b[i] <<- TRUE # change i-th elements to TRUE
+      b[i] <<- TRUE # highlight i-th elements (brush status: TRUE)
       view(b) # update the view automatically
     }
     b
@@ -359,7 +375,7 @@ reactiveBrush=10:28 # brush points from 10th to 28th
 
 Now our only task is to assign indices of the brushed points to \texttt
 {reactiveBrush}, since the plot will be updated automatically. A real
-interactive graphics system is more complicated that the above toy example,
+interactive graphics system is more complicated than the above toy example,
 but it shows the foundation of the pipeline. The two kinds of interactive
 objects in \textbf{cranvas} are explained in the next two sections,
 respectively.
@@ -367,12 +383,12 @@ respectively.
 
 \subsection{Mutaframes}
 
-Mutaframes are extensions to R data frames, that are being made mutable.
-This means that changes to its elements can be made anywhere regardless of
-the current environment. By comparison, a data frame can only be modified in
-the environment in which it was created, unless we use the non-local
-assignment operator \texttt{<\textcompwordmark{}<-}. The difference is
-highlighted in the example below:
+Mutaframes are extensions to R data frames. They are mutable, which means
+that changes to its elements can be made anywhere regardless of the current
+environment. By comparison, a data frame can only be modified in the
+environment in which it was created, unless we use the non-local assignment
+operator \texttt{<\textcompwordmark{}<-}. The difference is highlighted in
+the example below:
 
 <<mf-mutable>>=
 library(plumbr)
@@ -387,41 +403,56 @@ f() # modified mf, but not df
 c(mf$x[2], df$x[2])
 @
 
-As we can see, \texttt{mf} can be modified inside \texttt{f()}, but
-\texttt{df} cannot, therefore we can share the same mutaframe across
-multiple plots. Another important feature of mutaframes is that we
-can attach listeners onto them. A listener is essentially an R function
-which is called upon changes in the mutaframe. For interactive graphics,
-we can update the views with listeners. Below we create a mutaframe
-and attach a listener to it to redraw the scatterplot:
+As we can see, \texttt{mf} can be modified inside \texttt{f()}, but \texttt
+{df} cannot, therefore we can share the same mutaframe across multiple
+plots. Another important feature of mutaframes is that we can attach
+listeners to them. A listener is essentially an R function which is called
+upon changes in the mutaframe. For interactive graphics, views are updated
+with listeners. Below we create a mutaframe and attach a listener to it to
+redraw the scatterplot:
 
 <<mf-listener>>=
 mf = mutaframe(cars)
 add_listener(mf, function(i, j) {
-  plot(mf$speed, mf$dist)
+  # i indicates the rows modified, and j indicates columns
+  plot(dist~speed, data=as.data.frame(mf))
 })
 @
 
 Now whenever we update \texttt{mf}, the scatterplot will be updated
-accordingly. For example, we make a square-root transformation of
-the \texttt{dist} variable:
+accordingly. For example, we make a square-root transformation of the \texttt
+{dist} variable (see Figure \ref{fig:mf-plots} for the original plot and
+the transformed version):
 
 <<sqrt-dist, eval=FALSE>>=
 mf$dist = sqrt(mf$dist)
 @
 
+\begin{figure}
+<<mf-plots, fig.width=3.5, fig.height=3.5, fig.show='hold', out.width='.49\\linewidth', par=TRUE, dev='tikz', cache=TRUE, echo=FALSE, results='asis'>>=
+plot(cars)
+mf$dist = sqrt(mf$dist)
+@
+
+\caption{The original scatterplot (left) is automatically updated (right)
+when the \texttt{dist} variable is square-root transformed (right). We can
+also modify the \texttt{speed} variable, or change the values of some rows
+in the data to update the plot. \label{fig:mf-plots}}
+
+\end{figure}
+
 A more complex but direct application of mutaframes is the example shown in
 the movie displayed in Figure \ref{tour}: here, we see a two dimensional
-grand tour \citep{asimov1985} through the flea data set (provided in the {\tt
-tourr} package). After a while, we can see a separation of the data into
-three clusters (species separate into three distinct multivariate clusters).
-A two dimensional tour consists of a series of projections into two
-dimensional space. By choosing projections less than 6 degree apart, a sense
-of continuity is preserved for the observer. This continuity allows us to
-identify clusters as groups of points that share a common fate \citep[e.g.]
-[]{wolfe2012sensation}. Internally, the movie-like view is upheld by
-repeated changes to the $X$ and $Y$ values displayed, which are propagated
-to the view.
+grand tour \citep{asimov1985} through the flea dataset provided in the
+\textbf{tourr} package \citep{tourr}. After a while, we can see a separation
+of the data into three clusters (species separate into three distinct
+multivariate clusters). A two dimensional tour consists of a series of
+projections into two dimensional space. By choosing projections less than 6
+degree apart, a sense of continuity is preserved for the observer. This
+continuity allows us to identify clusters as groups of points that share a
+common fate \citep[e.g.] []{wolfe2012sensation}. Internally, the movie-like
+view is upheld by repeated changes to the $X$ and $Y$ values displayed,
+which are propagated to the view.
 
 \begin{figure}
 \includegraphics[width=0.6\linewidth, height=0.6\linewidth]{figure/tour}
@@ -434,248 +465,558 @@ three clusters. Watch the video online at \url
 
 Interactivity of a mutaframe can be propagated to its subsets, and this
 allows us to build multiple applications based on one mutaframe and its
-offsprings \citep{hurley1988}. For instance, we can select a subset of
-points in a scatterplot, obtain their indices, and use the indices to subset
-the original mutaframe to draw a new plot. Then the new plot is naturally
-connected with the original plot: when we interact with the new plot, the
-interaction will be passed to the original plot, and vice versa.
+offsprings. For instance, we can select a subset of points in a scatterplot,
+obtain their indices, and use the indices to subset the original mutaframe
+to draw a new plot. The new plot is naturally connected with the original
+plot: when we interact with the new plot, the interaction will be passed to
+the original plot, and vice versa. This is similar to an earlier example
+described by \citet{hurley1988}.
 
 \subsection{Reference classes}
 
-R introduced reference classes since version 2.12 (thanks to John Chambers).
-This made it possible to create objects with fields that can be accessed by
-reference. A consequence of this feature is that such objects can be used
-for storing meta data in the graphics system, and the data can be easily
-modified outside of plotting functions. For instance, we store the axes
-limits in an object \texttt{meta} as \texttt{meta\$limits} (in other words,
-\texttt{limits} is a field of \texttt{meta}). After the plot has been drawn,
-we can still modify its limits via command line and the new limits will be
-available to the internal members of the plotting function. This is
+R introduced reference classes in version 2.12. This made it possible to
+create objects with fields that can be accessed by reference. A consequence
+of this feature is that such objects can be used for storing meta data in
+the graphics system, and the data can be easily modified outside of plotting
+functions. For instance, we can store the axis limits in an object \texttt
+{meta} as \texttt{meta\$limits} (in the terminology of reference classes,
+\texttt{limits} is called a \emph{field} of \texttt{meta}). After the plot
+has been drawn, we are still able to modify its limits and the new limits
+will be available to the internal members of the plotting function. This is
 inconvenient, if not impossible, under the usual copy-on-modify semantics in
-R.
+R. The brushing example in Figure \ref{fig:mvc-brush} is rewritten using
+reference classes:
 
-What is more important in our system is the extension by the \textbf
-{objectSignals} package \citep{objectSignals} based on reference classes.
-The objects created from this package are called ``signal objects'', which
-are basically special reference classes objects with listeners attached on
-them. This is similar to mutaframes described before, but we can create
-objects of arbitrary structures. The difference between mutaframes and
-signal objects is similar to the difference between data frames and lists in
-R.
+<<RC-brush, eval=FALSE, tidy.opts=list(width.cutoff=60)>>=
+objBrush = setRefClass('Brush', fields = list(.brushed = 'logical', brushed = function(i) {
+  if (missing(i)) return(.brushed)
+  .brushed[] <<- FALSE
+  .brushed[i] <<- TRUE  # brush the i-th element(s)
+  view(.brushed)  # update the view
+  .brushed
+}), methods = list(initialize = function() {
+  .brushed <<- logical(nrow(cars))
+}))
+obj = objBrush$new()
+obj$brushed = 1:4  # brush the first 4 points
+obj$brushed = 10:28
+obj$brushed  # show which elements are currently brushed
+@
 
-\begin{figure}
-\includegraphics[width=.7\textwidth]{figure/diagram1}
-\includegraphics[width=.9\textwidth]{figure/diagram2}
-\end{figure}
+We created a reference class object \texttt{obj} from the constructor \texttt
+{objBrush}, and this object has a field called \texttt{.brushed} which is a
+logical vector to store the brush status. The other field \texttt{brushed}
+is a function that acts as the controller: we can assign new values to it,
+and the view will be updated accordingly. We can also query the current
+brush status to, for example, explore the brushed subset of the data
+separately. The object \texttt{obj} can be modified anywhere in the system
+as desired, which is often not the case for normal R objects. We will show
+how reference classes work for interactions in single display applications
+later.
 
-\section{An Anatomy of Interactions}
+What is more important is the extension by the \textbf{objectSignals}
+package \citep{objectSignals} based on reference classes. The objects
+created from this package are called ``signal objects'', which are basically
+special reference classes objects with listeners attached on them. This is
+similar to mutaframes described before, but we can create objects of
+arbitrary structures. The difference between mutaframes and signal objects
+is similar to the difference between data frames and lists in R.
+
+\subsection{Reactive programming behind cranvas}\label{sec:reactive-cranvas}
+
+Mutaframes and reference classes objects are extensively used in \textbf
+{cranvas}, although this may not be immediately obvious to the users. Below
+we show some quick examples based on the Ames housing data (Ames, IA, 2008
+-- 2012). Before we draw any plots in \textbf{cranvas}, we have to create a
+mutaframe using the function \texttt{qdata()}:
+
+<<cranvas-simple, eval=FALSE>>=
+library(cranvas)
+qames = qdata(ameshousing)  # a mutaframe
+qhist(saleprice, data = qames)  # a plot with meta objects attached
+qbar(baths, data = qames, horizontal = TRUE) # horizontal barchart
+qscatter(livingarea, saleprice, data = qames)
+@
+
+The function \texttt{qhist()} draws a histogram of the sale price, \texttt
+{qbar()} draws a bar chart of the number of bathrooms, and \texttt
+{qscatter()} draws a scatterplot of the sale price against the living area.
+All plotting functions have to take a \texttt{data} argument, which is a
+mutaframe. Inside each function, listeners will be built on the data so
+changes in the plot can be propagated back to the data object, and further
+passed to other plots.
+
+The returned value of a plotting function contains the signal object, which
+can be retrieved from the attributes of the returned value. The user can
+manipulate the signal object and the plot can respond to the changes,
+because a number of listeners have been attached to it internally when we
+call the plotting function.
+
+Figure \ref{fig:hist} and \ref{fig:bar} show the histogram and the bar chart
+from the above R code. We will present details about the reactive objects in
+the next section.
+
+%==============================================================================%
+\section{An Anatomy of Interactions}\label{sec:interaction}
+%==============================================================================%
 
 In this section, we show how some common interactions, including brushing,
-zooming, and querying, etc, were implemented in the \textbf{cranvas}
-package. The data infrastructure is based on mutaframes and reference
-classes, as introduced in the previous section. The actual drawing is based
-on the packages \textbf{qtbase} \citep{qtbase} and \textbf{qtpaint} \citep
-{qtpaint}, which connect R to Qt \citep{verzani2012}.
+zooming, and querying, etc, were implemented in \textbf{cranvas}. The data
+infrastructure is based on mutaframes and reference classes/signal objects,
+as introduced in the previous section. The actual drawing is based on the
+packages \textbf{qtbase} \citep{qtbase} and \textbf {qtpaint} \citep
+{qtpaint}, which provide an interface from R to Qt \citep {verzani2012}.
 
-Interaction happens on multiple levels. The most common forms of interaction
-with a display are listed below in decreasing order of immediacy with which
-this interaction between the user and the display happens:
+\subsection{Input actions}
+
+Interaction with a system involves user actions as the input to the system,
+then the system resolves the input information and responds to the user.
+Interaction happens on multiple levels of user actions. The most common
+forms of interaction with a display are listed below in decreasing order of
+immediacy with which this interaction between the user and the display
+happens:
 
 \begin{description}
 
-\item [\bf Direct manipulation] of graphical objects \citep{becker1987, wills1999}
-is at the heart of interactive graphics.  Direct manipulation is what we use only
-for the highest level of interaction, such as selection or brushing of elements.
-With a set of different modes (querying, scaling mode as e.g. implemented in XGobi,
-GGobi \citep{swayne2003}) a set of different or additional interactions can be
-incorporated at the highest level. Another approach is to make use of visual cues
-\citep{unwin96, theus02}, which make areas of interactions visible to the user by
-changing the cursor upon entering the cue area. Visual cues are usually associated
-with changes to the resolution of a representation or scales of a display.
+\item [Direct manipulation] of graphical objects \citep{becker1987,
+wills1999} is at the heart of interactive graphics. Direct manipulation is
+what we use only for the highest level of interaction, such as selection or
+brushing of elements. With a set of different modes (querying, scaling mode
+as, for example, implemented in XGobi/GGobi), a set of different or
+additional interactions can be incorporated at the highest level. Another
+approach is to make use of visual cues \citep{unwin96, theus02}, which make
+areas of interactions visible to the user by changing the cursor upon
+entering the cue area. Visual cues are usually associated with changes to
+the resolution of a representation or scales of a display. See Figure \ref
+{fig:hist} for an example of a histogram with visual cues.
 
-\item [{\bf Input devices}:] most input devices, such as mice or touch pads,
-allow a finer level of interaction than just click-selection; e.g. all operating
-platforms and devices specify wheel events (either through the presence of a
-mouse wheel, a mouse move with additional modifier key, or a touch gesture).
+\item [Input devices] such as mice or touch pads allow another level of
+interaction besides just click-selection; e.g., most operating platforms
+support wheel events (either through the presence of a mouse wheel, a mouse
+move with an additional modifier key, or a touch gesture), and a wheel event
+often corresponds to the zooming of a plot.
 
-\item [\bf Keystrokes] can be used for quick access to functions that are also
-accessible through a (popup) menu or other toolbar. Figure \ref{cartogram} shows
-an example of a key stroke interaction (arrow keys left and right) to move
-between a choropleth map of the United States and a population based cartogram.
+\item [Keystrokes] can be used for quick access to functions that are also
+accessible through a (popup) menu or other toolbar. Figure \ref
+{fig:cartogram} shows an example of a key stroke interaction (arrow keys
+\textsf{Left} and \textsf{Right}) to move between a choropleth map of the
+United States and a population based cartogram.
 
-\item [\bf Functional access] through the console: Accessor functions allow us
-to get information about the state of  objects (e.g. get selected elements).
-Mutator functions enable the user to set a particular state for objects in a
-display (e.g. set highlighting color to red, set points to size 5).
+\item [Functional access] through the console: Accessor functions allow us
+to get information about the state of objects (e.g., get the indices of
+selected elements). Mutator functions enable the user to set a particular
+state for objects in a display (e.g. set highlighting color to red, set
+points to size 5). We may call this level of interaction ``indirect
+manipulation'' of graphics.
+
 \end{description}
 
 \begin{figure}
+
 \includegraphics[width=\textwidth]{images/histogram}
-\caption{\label{hist}Histogram of sales prices. Sales of \$200k and more are selected and highlighted in yellow. Markers show cue regions. }
+
+\caption{Histogram of sales prices. Sales of \$200k and more are selected
+and highlighted in yellow. Markers show cue regions. See \url
+{http://cranvas.org/examples/qhist.html} for a video of the interactions.
+\label{fig:hist}}
+
 \end{figure}
+
+
+
 \begin{figure}
-\centering
-\includegraphics[height=0.55\textwidth]{images/bar}
-\includegraphics[height=0.55\textwidth]{images/spine}
-\caption{\label{bar} Barchart (left) and spineplot (right) of the number of bedrooms in housing sales. Highlighted are sales of \$200k and higher. Querying gives details on each bin (houses with a particular number of bedrooms) and the selected houses with this bin.}
+\includegraphics[width=\textwidth]{images/map-all.pdf}
+
+\caption{\label{fig:cartogram} Morph from a choropleth chart of the US (top
+left) to a population based cartogram (bottom right). The color represents
+electoral votes of states towards the Democratic (blue) or Republican party
+(red) in the 2012 Presidential election. The arrow indicates  the direction
+of the morph.  }
+
 \end{figure}
 
 On the developer's side, the main idea behind resolving an interaction
 between the user and the display, is to actually resolve the interaction at
 the level of the data, but make it appear as if the user had directly
-interacted with the graphical object.
+interacted with the graphical object. This is essentially what happens in
+\textbf{cranvas} when we interact with plots.
+
+All levels of interactions mentioned above are supported in \textbf
+{cranvas}, and this package does not really discriminate direct manipulation
+from indirect manipulation. At its core, all kinds of manipulation end up as
+the manipulation of the underlying data objects, on which we elaborate in
+the next section.
+
+
+\subsection{Reactive data objects}\label{sec:reactive-data}
+
+The first step to create interactive plots in \textbf{cranvas} is to create
+a mutaframe, as illustrated in Figure \ref{fig:mutaframe}. The function
+\texttt{qdata()} in \textbf{cranvas} returns a mutaframe with a few more
+columns appended to a data frame. Below is a simple example:
 
 \begin{figure}
-% \includegraphics[width=0.3\textwidth]{images/map-0}
-% \includegraphics[width=0.3\textwidth]{images/map-1}
-% \includegraphics[width=0.3\textwidth]{images/map-2}
-% \includegraphics[width=0.3\textwidth]{images/map-5}
-% \includegraphics[width=0.3\textwidth]{images/map-4}
-% \includegraphics[width=0.3\textwidth]{images/map-3}
-% \includegraphics[width=0.3\textwidth]{images/map-6}
-% %\includegraphics[width=0.3\textwidth]{images/map-7}
-% \includegraphics[width=0.3\textwidth]{images/map-8}
-% %\includegraphics[width=0.3\textwidth]{images/map-9}
-% \includegraphics[width=0.3\textwidth]{images/map-10}
-\includegraphics[width=\textwidth]{images/map-all.pdf}
-\caption{\label{cartogram} Morph from a choropleth chart of the US (top left) to a population based cartogram (bottom right). The color represents electoral votes of states towards the Democratic (blue) or Republican party (red) in the 2012 Presidential election. The arrow indicates  the direction of the morph.  }
+\includegraphics[width=.7\textwidth]{figure/diagram1}
+
+\caption{The conversion from a data frame to a mutaframe, which can be
+imagined as an augmented and mutable data frame. Additional columns for the
+brush status and aesthetics of graphical elements are appended to the
+original data frame.\label{fig:mutaframe}}
+
 \end{figure}
 
-\subsection{Meta data}
+\begin{figure}
+\includegraphics[width=.9\textwidth]{figure/diagram2}
 
-% supporting info
-Graphical displays are data summaries, and as such they require some level
-of aggregation of the original data. This information is stored in form of
-meta data. Meta data is plot specific. Not only are data values stored to
-render a display, but also the parameters necessary to derive the data
-values for the display. It is those meta data that correspond directly to
-the graphical elements shown, and with which the user interacts. For
-resolving the interaction, the aggregation from the original data has to be
-reversed. Interactions are therefore only feasible in situations that can be
-reversed. A higher level of aggregation in a display usually requires a more
-complex data structure for an interaction.
+\caption{Create a scatter plot and attach a meta object to it.\label{fig:meta}}
 
-Since the data structure of meta data is very flexible, its application can be very wide.
-The {\tt cranvas} package allows the possibility of adding user customized meta
-information to any display. For example, the user can specify a function in the
-meta data to generate text labels when querying a plot.
+\end{figure}
+
+<<qdata-ex>>=
+head(cars, 4)
+library(cranvas)
+qcars = qdata(cars)
+head(qcars, 4)
+@
+
+We can see the data frame \texttt{cars} was augmented by columns such as
+\texttt{.brushed} and \texttt{.color}. The \texttt{.brushed} column
+indicates the brush status of graphical elements (\texttt{TRUE} means an
+element is brushed), and \texttt{.color} stores the colors of elements.
+
+It is up to a specific application how to interpret these additional
+columns. For example, it is easy to represent these attributes in scatter
+plots, because each row in the data corresponds to a point in the plot. For
+a bar chart displaying the frequencies for a categorical variable, \texttt
+{.brushed} may result in a partially or fully highlighted bar when only a
+subset in a category is brushed.
+
+Each single display application in \textbf{cranvas} creates a plot and
+attaches listeners on the mutaframe at the same time. Figure \ref{fig:meta}
+shows how a scatter plot is created from a mutaframe: before the \texttt
+{qscatter()} function displays the plot, it binds the augmented columns in
+the mutaframe with the plot layers using listener functions, so that when
+these columns are updated, the plot can be updated. For example, the \texttt
+{.color} column should update the main layer of points, and \texttt
+{.brushed} column controls the brush layer. The Qt graphics framework allows
+us to build a plot using layers, which makes it possible to update one
+component of a plot without having to update all others. This gives us a lot
+of performance gain, especially when we interact with plots of large numbers
+of elements. See \url{http://cranvas.org/2013/10/qt-performance/} for an
+example of brushing a scatter plot of three million points, which take less
+than 0.01 second to render, and are highly responsive to the brush. Reasons
+for the great performance include Qt itself, as well as the fact that the
+\texttt{.brushed} column only updates the brush layer, and the main plot
+layer of three million points is not affected while we move the brush over
+the plot.
+
+The other type of reactive data objects are called meta data in \textbf
+{cranvas}. Such objects often contain plot-specific information, such as the
+names of variables in the plot, and the axis limits, etc. See Figure \ref
+{fig:meta} again for an illustration of meta objects attached to plots. When
+a plot is created, a copy of meta data is generated and associated with it.
+See \url{http://cranvas.org/examples/qscatter.html} for an example of
+zooming: what happens behind the scenes is we modify the axis limits in the
+meta data in the mouse wheel event.
+
+Since the data structure of meta objects is very flexible, its application
+can be very wide. The \textbf{cranvas} package allows adding or customizing
+meta information to any displays. For example, the user can specify a
+function in the meta object to generate text labels when querying a plot. In
+the following text, we use \texttt{meta} to denote a meta data object.
 
 
+\subsection{Interactions}
 
-\subsection{Linking}
+Now we go into further details about the interactions supported in \textbf
+{cranvas}, and explain how they are related to the reactive data objects.
+
+\subsubsection{Brushing and selection}
+
+Brushing and selection are interactions that highlight a subset of graphical
+elements in a plot. It is usually achieved by a mouse dragging a rectangle
+(or other closed shapes) over a plot, and elements inside the rectangle are
+selected. The rectangle in the brushing mode is persistent on the screen;
+for the selection mode, the rectangle is transient, meaning that it
+disappears when the mouse is released.
+
+We use the \texttt{qscatter()} function to illustrate the basic idea. What
+really happens in \texttt{qscatter()} is too complicated to show here. We
+only show a sketch using pseudo code below:
+
+<<qscatter-sketch, eval=FALSE>>=
+qscatter = function(x, y, data) {
+  layer_main = draw_plot(x, y, data)  # the main plot layer
+  layer_brush = draw_brush(x, y, data) # the brush layer
+  view = pack(layer_main, layer_brush)
+  add_listener(data, function(i, j) {
+    if (j == x || j == y || j == '.brushed') update(layer_brush)
+  })
+  view
+}
+@
+
+There are two layers \texttt{layer\_main} and \texttt{layer\_brush} in the
+plot. The brush layer is used to redraw the brushed points only, so that the
+main layer can stay untouched when we brush the plot. The key for
+brushing/selection is the listener added to the mutaframe \texttt{data} by
+\texttt{add\_listener()} : when the column \texttt{x}, \texttt{y}, or \texttt
+{.brushed} is modified, we update the brush layer (changes in other columns
+will not affect the plot). Adding listener is denoted by the dashed arrow in
+Figure \ref{fig:meta}.
+
+When we brush the plot, the points under the brush are identified by the
+mouse events in Qt, and we modify the \texttt{.brushed} variable in the
+mutaframe in R. Because of the listener associated with \texttt{.brushed},
+the brush layer will be redrawn. Therefore the selection is actually handled
+with one step of backtracking: once the user draws a selection rectangle, we
+update \texttt{.brushed} immediately, which triggers the update of the brush
+layer. Because this occurs in a fast pace, the user may have an illusion
+that the cursor directly selected the points. See Figure \ref{fig:one-one}
+for an example of brushing scatterplots of the Ames housing data (R code is
+provided in the next section). The selection mode was used in these plots,
+so we do not see the brush rectangle. The brushing mode was used in Figure
+\ref{fig:hist}, where there is a yellow rectangle.
+
+In the case of a histogram, bins are the graphical objects intersecting with
+a selection rectangle. The backtracking corresponds to identifying all
+records in the mutaframe falling within the limits of the selected bin. The
+binary variable \texttt{.brushed} is changed when the brush moves over the
+bins, and the change is propagated to all dependencies, which results in an
+update to all dependent views. One of the dependent views is the histogram
+itself, which shows highlighting in form of superimposing a histogram of the
+highlighted records on top of the original histogram. What the user
+perceives as ``selecting'' bins is actually a reaction to a change in the
+internal brushing variable.
+
+\subsubsection{Linking}
 
 Linking forms the core of communication between multiple views. By default,
-all objects and views are linked that involve variables from the same data
-set. It is feasible to extend this concept to  link different sources or
-aggregation levels. Linking within the same data set is implicit one-to-one
-linking. If the same objects are under consideration but are reported in
-different data sets, we can make this linking explicit. In the example of
-Figure \ref{linked}, data on states is linked from two different sources,
-resulting in {\it categorical linking}, as each state in the map is
-described by multiple locations following the border. kNN ($k$ nearest
-neighbor) linking is based on (multivariate) distance between points.
-Selecting one point in a view also selects the $k$ closest points in its
-neighborhood. This can be based on geographical distance as much as more
-abstract multivariate distances.
+all views that involve variables from the same mutaframe are linked. Linking
+within the same dataset is implicit one-to-one linking.
+
+We still use the mutaframe \texttt{qames} from Section \ref
+{sec:reactive-cranvas}, and create two scatterplots (Figure \ref
+{fig:one-one}), which illustrate one-to-one linking:
+
+<<one-one, eval=FALSE>>=
+qscatter(livingarea, saleprice, data = qames)
+qscatter(livingarea, garagearea, data = qames)
+@
+
+\begin{figure}
+\includegraphics[width=.49\textwidth]{figure/scatter-sale}
+\includegraphics[width=.49\textwidth]{figure/scatter-garage}
+
+\caption{One-to-one linking: we highlight the house with the largest garage
+in the right plot, and this house is also highlighted in the left plot.
+Apparently it is not of the highest price. \label{fig:one-one}}
+
+\end{figure}
+
+Recall in the previous section that when a scatterplot is created, a
+listener to update the brush layer is attached to the mutaframe. It does not
+matter where the mutaframe is modified, all the brush layers will be updated
+if the \texttt{.brushed} variable in the mutaframe is modified. When we
+interact with either of the plot, the other plot will respond to the
+changes, because both plots depend on the \texttt{.brushed} variable in the
+same mutaframe.
+
+It is feasible to extend this concept to link different sources or
+aggregation levels of the data. Take the following two types of linking for
+example:
+
+\begin{description}
+
+  \item[Categorical linking] means when we brush one or more observations in
+  one category, all observations in this category are brushed; this is
+  achieved in the listener by setting all elements of \texttt{.brushed} in
+  this category to \texttt{TRUE};
+
+  \item[kNN linking] ($k$ nearest neighbor) means when we brush an
+  observation, its $k$ nearest neighbors under a certain distance metric are
+  brushed as well; again, this is nothing but setting the relevant elements
+  in \texttt{.brushed} to \texttt{TRUE}.
+
+\end{description}
+
+They can be applied to a single data source (called ``self-linking''), or
+multiple data sources. In the latter case, the listener in one data object
+needs to update other data objects. In Figure \ref{fig:linked}, the map and
+the scatterplot use two different sources, and they are linked via
+categorical linking through the state names. Each state in the map is
+described by multiple locations following the border, but one state only has
+one observation in the scatterplot. If we brush California in the
+scatterplot, the whole polygon of California (containing multiple locations)
+is highlighted. On the other hand, if we brush a part of a state in the map,
+that means the whole state should be highlighted when only the state level
+data is available.
+
 
 \begin{figure}
 \includegraphics[height=0.4\textwidth]{images/choropleth}
 \includegraphics[height=0.4\textwidth]{images/scatter}
-\caption{\label{linked}Linked map (left) and scatterplot (right). Color shading shows (log) state population with darker shades indicating higher values. The scatterplot on the right displays the number of burglaries in 2009 versus the number of motor vehicle thefts by state. There is a strong correlation between the variables, which is mainly induced by a strong underlying correlation with population. Compared to other states, California displays a high number of motor vehicle thefts compared to the number of burglaries.}
+
+\caption{Linked map (left) and scatterplot (right). Color shading shows
+(log) state population with darker shades indicating higher values. The
+scatterplot on the right displays the number of burglaries in 2009 versus
+the number of motor vehicle thefts by state. There is a strong correlation
+between the variables, which is mainly induced by a strong underlying
+correlation with population. Compared to other states, California displays a
+high number of motor vehicle thefts compared to the number of burglaries.
+\label{fig:linked}}
+
 \end{figure}
-\subsection{Interactions}
 
-The list below shows a set of interactions ordered depending on the level at
-which it can be resolved:
-
-\begin{description}
-
-\item[{\bf Zooming and panning}] are direct interactions with the display,
-that can be resolved directly without the need of interaction with the
-original data. In {\tt cranvas}, the core of zooming and panning consists of
-simple changes to {\tt meta\$limits}.
-
-\item[\bf Querying] is another interaction that usually can be resolved
-without any further information from the original data. Querying of
-graphical objects involves, in a first step the display of the corresponding
-values of the meta data. In the case of the barcharts in Figure \ref{bar},
-querying of the bins displays information, about the bin's level, the number
-of records it encompasses, as well as the proportion of the whole data that
-this bin contains. The same information is also displayed at the level of
-the selected values in the bar. The proportion shown is the proportion of
-selected elements within the bin.
-
-\item[{\bf Brushing, Querying, and Selection}] are all (mode-dependent)
-interactions that require backtracking of one step of aggregation; the
-histogram of Figure \ref{hist} shows sales prices of all houses sold in
-Ames, IA from 2008 to 2012. The yellow rectangle corresponds to an an area
-based selection of all houses with sales of \$200k or more, that triggers a
-highlighting of all corresponding houses in all displays of the Ames housing
-data. This includes the histogram itself, where all bins intersecting with
-the selection rectangle are filled with highlighting color, and all
-barcharts of the number of bedrooms as shown in Figure \ref{bar}.
-
-Internally, this selection is handled with one step of backtracking: Once
-the user draws a selection rectangle, meta data of all graphical objects
-intersecting with it is investigated. In the case of a histogram, bins are
-the graphical objects intersecting with a selection rectangle. Corresponding
-to each bin, meta information is available. This information contains lower
-and upper limits of an interval on the scale of the variable  and the number
-of records in the original data with values within those limits. The
-backtracking corresponds to identifying all records in the original data
-falling within the limits of the selected bin. The original data contains an
-internal binary variable {\tt .brushed} encoding selection status of a
-record. When this status is changed, the change is propagated to all
-dependencies, which results in an update to all affected views. In the
-situation of the histogram, a selection corresponds to an update of the {\tt
-.brushed} variable, which in turn informs all linked views of an update of
-the highlighting status. One of the dependent views is the histogram itself,
-which shows highlighting in form of superimposing a histogram of the
-highlighted records on top of the original histogram. What the user
-perceives as `selecting' bins is actually a reaction to a change in the
-internal brushing variable.
-
-\item[{\bf Interactions with graphical objects}]: visual cues indicate
-additional areas of interaction in graphical objects other than the ones
-representing the data. Figure \ref{hist} shows several examples of visual
-cues in a histogram. Both anchor point and bin width are graphical
-representations of plotting parameters for the histogram. The anchor of a
-histogram is the lower limit of the left most bin. The bin width then
-defines the interval at which breaks are drawn to define bins. Interactions
-with both anchor and binwidth cues consist of horizontal shifts, which
-re-set the actual values parametrizing the histogram. Changes to the anchor
-allow to test for instabilities in the display due to discreteness in the
-data.  Binwidth changes show the data at different levels of smoothness and
-therefore allow for a visualization of `big' picture marginal distributions
-for large bin widths and the investigation of small pattern features, such
-as multiple modes and gaps in the data for small bin widths. Examples for
-both of these interactions are available as movies in the supplementary
-material.
-
-\end{description}
+Linking can also be done on the same data with different aggregation levels,
+such as the raw data and binned data. The histogram in Figure \ref{fig:hist}
+shows sales prices of all houses sold in the Ames housing data. The yellow
+rectangle corresponds to an area based selection of all houses with sales of
+\$200k or more, which triggers a highlighting of all corresponding houses in
+all displays of the Ames housing data. This includes the histogram itself,
+where all bins intersecting with the selection rectangle are filled with
+highlighting color, and all bar charts of the number of bedrooms as shown in
+Figure \ref{fig:bar}.
 
 
 
-\section{Discussion and Conclusions}
+\subsubsection{Zooming and panning}
 
-The \textbf{cranvas} package has a clear distinction with these packages in terms of
-the underlying data structure. The plotting pipeline is expressed and attached to
-the data as well as the meta data. Using the reactive programming model, the user
-does not need to pay attention to the whole pipeline, which makes it easy to extend
-this system. For example, implementing the tour is nothing but to draw a scatterplot
-(of projected variables), and keep on modifying the data, because the data will
-update the scene automatically upon changes.
+They allow us to change or shift the scale of the view, so we can see the
+data with different granular levels. They can be resolved directly without
+the need of interaction with the original data. In \textbf{cranvas}, the
+core of zooming and panning consists of simple changes to the meta data
+\texttt{meta\$limits}. Again, for the sake of simplicity, we show the pseudo
+code:
 
-The future work of \textbf{cranvas} is to include more plot types such as hexbin plots
-and scatterplot matrices, and allow users to define how the system reacts to changes.
+<<meta-zoom,eval=FALSE>>=
+qscatter = function(x, y, data) {
+  meta = Scatter$new(limits = cbind(range(x), range(y)))
+  layer_main = draw_plot(x, y, data)
+  view = pack(layer_main)  # put the layer in a view
+  meta$limitsChanged = function() {
+    layer_main$setLimits(meta$limits)
+  }
+  attr(view, 'meta') = meta
+  view
+}
+@
+
+\texttt{Scatter} is a constructor created from reference classes, and we
+store a field \texttt{limits} in \texttt{meta}. The key here is to set up
+the event \texttt{meta\$limitsChanged}: this event is triggered when \texttt
+{meta\$limits} is modified, and the axis limits of the main plot layer are
+replaced by the new value of \texttt{meta\$limits}. The \texttt{setLimits()}
+method is from Qt, which is used to set new limits on a layer, and Qt will
+update the view when the limits are changed.
+
+On the R side, we modify \texttt{meta\$limits} in the mouse wheel event for
+zooming, and in the mouse drag event for panning. We have given a video
+example of zooming into the \texttt{pollen} data in Section \ref
+{sec:reactive-data}. Figure \ref{fig:zoom} shows two screenshots of the
+original scatterplot and the zoomed version, respectively.
+
+<<pollen-zoom, eval=FALSE>>=
+library(cranvas)
+data(pollen, package = "animation")
+qpollen = qdata(pollen, size = 2)
+qscatter(RIDGE, NUB, data = qpollen)
+@
+
+\begin{figure}
+\includegraphics[width=.49\textwidth]{figure/pollen-origin}
+\includegraphics[width=.49\textwidth]{figure/pollen-zoom}
+
+\caption{Zooming into the \texttt{pollen} data. The original scatterplot
+(left) does not show anything interesting, and as we zoom into the plot, we
+see a hidden word ``EUREKA''. \label{fig:zoom}}
+
+\end{figure}
+
+
+\subsubsection{Querying/identifying}
+
+It is another interaction that usually can be resolved without further
+information from the original data, although sometimes the original data may
+also be used. Querying of graphical objects involves, in a first step, the
+display of the corresponding values of the meta data. In the case of the
+bar charts in Figure \ref{fig:bar}, querying of the bins displays
+information, about the bin's level, the number of records it encompasses, as
+well as the proportion of the whole data that this bin contains. The same
+information is also displayed at the level of the selected values in the
+bar. The proportion shown is the proportion of selected elements within the
+bin.
+
+\begin{figure}
+\includegraphics[height=0.55\textwidth]{images/bar}
+\includegraphics[height=0.55\textwidth]{images/spine}
+
+\caption{\label{fig:bar} Bar chart (left) and spine plot (right) of the number
+of bedrooms in housing sales. Highlighted are sales of \$200k and higher.
+Querying gives details on each bin (houses with a particular number of
+bedrooms) and the selected houses with this bin.}
+
+\end{figure}
+
+
+\subsubsection{Direct manipulation}
+
+Interactions with graphical objects: visual cues indicate additional areas
+of interaction in graphical objects other than the ones representing the
+data. Figure \ref{fig:hist} shows several examples of visual cues in a
+histogram. Both anchor point and bin-width are graphical representations of
+plotting parameters for the histogram. The anchor of a histogram is the
+lower limit of the left most bin. The bin-width then defines the interval at
+which breaks are drawn to define bins. Interactions with both anchor and
+bin-width cues consist of horizontal shifts, which re-set the actual values
+parametrizing the histogram. Changes to the anchor allow to test for
+instabilities in the display due to discreteness in the data. Bin-width
+changes show the data at different levels of smoothness and therefore allow
+for a visualization of `big' picture marginal distributions for large bin
+widths and the investigation of small pattern features, such as multiple
+modes and gaps in the data for small bin-widths. Examples for both of these
+interactions are available as movies in the supplementary material.
+
+The visual cues in this case also correspond to meta elements. Specifically,
+the bin limits are stored in \texttt{meta\$breaks}, and the histogram layer
+is connected to the \texttt{meta\$breaksChanged} event. The anchor modifies
+\texttt{meta\$breaks} when we drag it.
+
+\section{Conclusions}
+
+MVC has a clear concept of the controller, and it is made implicit in
+reactive programming. In this paper, we use reactive data objects to manage
+the views. We can imagine a reactive object as a signal splitter, and we
+connect multiple devices to it. One splitter can connect to another one
+using a custom cable to build a bigger system (linking), and signals can
+flow back and forth in the system.
+
+The \textbf{cranvas} package is built on graphics layers in Qt (frontend)
+and reactive data objects in R (backend). The plotting pipeline is expressed
+and attached to mutaframes as well as meta data objects. Using the reactive
+programming model, the user does not need to pay attention to the whole
+pipeline, which makes it easy to extend this system. For example,
+implementing the tour is nothing but to draw a scatterplot of the projected
+variables, and keep on modifying the data, because the mutaframe will update
+the view automatically upon changes.
+
+The future work of \textbf{cranvas} is to include more plot types such as
+hexbin plots and scatterplot matrices, and allow users to define how the
+system reacts to changes. We still do not have a graphical user interface
+yet, and fortunately the \textbf{qtbase} package has made it easy to build
+Qt GUI's in R. Due to our adoption of the reactive programming paradigm, the
+GUI widgets can be connected to the plots via reactive data objects only.
+They do not need to know the internal structure of plots; this kind of
+separation will make the system easier to maintain and extend.
 
 % what reactive programming enables cranvas to do and other systems cannot
 % easily do is interaction from command line besides direct manipulation
 
 \section*{Supplementary material}
-The \textbf{cranvas} package is available on GitHub at \url{https://github.com/ggobi/cranvas}.
-We have movies showing some interactions that are available through the website
-\url{http://cranvas.org}.
+
+The \textbf{cranvas} package is available on GitHub at \url
+{https://github.com/ggobi/cranvas}. We have movies showing some interactions
+that are available on the website \url{http://cranvas.org}.
 
 \bibliographystyle{imsart-nameyear}
 \bibliography{reactive-programming}
