@@ -178,10 +178,11 @@ this paper.
 \begin{figure}
 \includegraphics[width=\textwidth]{figure/diagram3}
 
-\caption{A representation of the pipeline in the \textbf{cranvas} package.
-It shows how plots are linked to each other as well as the data source.
-Elements are added to the data to facilitate the interaction. Arrows with
-solid lines indicate R functions that draw the plots. \label{fig:pipeline}}
+\caption[A representation of the pipeline in the \textbf{cranvas} package]
+{A representation of the pipeline in the \textbf{cranvas} package. It shows
+how plots are linked to each other as well as the data source. Elements are
+added to the data to facilitate the interaction. Arrows with solid lines
+indicate R functions that draw the plots. \label{fig:pipeline}}
 
 \end{figure}
 
@@ -263,13 +264,13 @@ controller(1:4)  # the first four points
 controller(10:28)  # points from 10th to 28th
 @
 
-\caption{Brush a scatterplot using the MVC design: brush the first four
-points (left), then brush all points from the 10th to 28th. The dashed
-rectangle denotes the ``brush'', which is normally created by dragging the
-cursor over the points. The \texttt{cars} data is a dataset in base R. It
-has been ordered first by \texttt{speed} and then \texttt{dist} in the
-increasing order, so the bottom-left point is the first observation in the
-data. \label{fig:mvc-brush}}
+\caption[Brush a scatterplot using the MVC design]{Brush a scatterplot using
+the MVC design: brush the first four points (left), then brush all points
+from the 10th to 28th. The dashed rectangle denotes the ``brush'', which is
+normally created by dragging the cursor over the points. The \texttt{cars}
+data is a dataset in base R. It has been ordered first by \texttt{speed} and
+then \texttt{dist} in the increasing order, so the bottom-left point is the
+first observation in the data. \label{fig:mvc-brush}}
 
 \end{figure}
 
@@ -434,10 +435,11 @@ plot(cars)
 mf$dist = sqrt(mf$dist)
 @
 
-\caption{The original scatterplot (left) is automatically updated (right)
-when the \texttt{dist} variable is square-root transformed (right). We can
-also modify the \texttt{speed} variable, or change the values of some rows
-in the data to update the plot. \label{fig:mf-plots}}
+\caption[The original scatterplot is automatically updated]{The original
+scatterplot (left) is automatically updated (right) when the \texttt{dist}
+variable is square-root transformed (right). We can also modify the \texttt
+{speed} variable, or change the values of some rows in the data to update
+the plot. \label{fig:mf-plots}}
 
 \end{figure}
 
@@ -457,9 +459,9 @@ which are propagated to the view.
 \begin{figure}
 \includegraphics[width=0.6\linewidth, height=0.6\linewidth]{figure/tour}
 
-\caption{A grand tour through the flea data. The points are separated into
-three clusters. Watch the video online at \url
-{http://cranvas.org/examples/qtour.html}. \label{tour}}
+\caption[A grand tour through the flea data]{A grand tour through the flea
+data. The points are separated into three clusters. Watch the video online
+at \url {http://cranvas.org/examples/qtour.html}. \label{tour}}
 
 \end{figure}
 
@@ -615,10 +617,10 @@ manipulation'' of graphics.
 
 \includegraphics[width=\textwidth]{images/histogram}
 
-\caption{Histogram of sales prices. Sales of \$200k and more are selected
-and highlighted in yellow. Markers show cue regions. See \url
-{http://cranvas.org/examples/qhist.html} for a video of the interactions.
-\label{fig:hist}}
+\caption[Histogram of sales prices]{Histogram of sales prices. Sales of \$
+200k and more are selected and highlighted in yellow. Markers show cue
+regions. See \url {http://cranvas.org/examples/qhist.html} for a video of
+the interactions. \label{fig:hist}}
 
 \end{figure}
 
@@ -627,11 +629,12 @@ and highlighted in yellow. Markers show cue regions. See \url
 \begin{figure}
 \includegraphics[width=\textwidth]{images/map-all.pdf}
 
-\caption{\label{fig:cartogram} Morph from a choropleth chart of the US (top
-left) to a population based cartogram (bottom right). The color represents
-electoral votes of states towards the Democratic (blue) or Republican party
-(red) in the 2012 Presidential election. The arrow indicates  the direction
-of the morph.  }
+\caption[Morph from a choropleth chart of the US to a population based
+cartogram]{Morph from a choropleth chart of the US (top left) to a
+population based cartogram (bottom right). The color represents electoral
+votes of states towards the Democratic (blue) or Republican party (red) in
+the 2012 Presidential election. The arrow indicates  the direction of the
+morph. \label{fig:cartogram}}
 
 \end{figure}
 
@@ -658,17 +661,19 @@ columns appended to a data frame. Below is a simple example:
 \begin{figure}
 \includegraphics[width=.7\textwidth]{figure/diagram1}
 
-\caption{The conversion from a data frame to a mutaframe, which can be
-imagined as an augmented and mutable data frame. Additional columns for the
-brush status and aesthetics of graphical elements are appended to the
-original data frame.\label{fig:mutaframe}}
+\caption[The conversion from a data frame to a mutaframe]{The conversion
+from a data frame to a mutaframe, which can be imagined as an augmented and
+mutable data frame. Additional columns for the brush status and aesthetics
+of graphical elements are appended to the original data frame.\label
+{fig:mutaframe}}
 
 \end{figure}
 
 \begin{figure}
 \includegraphics[width=.9\textwidth]{figure/diagram2}
 
-\caption{Create a scatter plot and attach a meta object to it.\label{fig:meta}}
+\caption[Create a scatter plot and attach a meta object to it]{Create a
+scatter plot and attach a meta object to it.\label{fig:meta}}
 
 \end{figure}
 
@@ -808,9 +813,9 @@ qscatter(livingarea, garagearea, data = qames)
 \includegraphics[width=.49\textwidth]{figure/scatter-sale}
 \includegraphics[width=.49\textwidth]{figure/scatter-garage}
 
-\caption{One-to-one linking: we highlight the house with the largest garage
-in the right plot, and this house is also highlighted in the left plot.
-Apparently it is not of the highest price. \label{fig:one-one}}
+\caption[One-to-one linking]{One-to-one linking: we highlight the house with
+the largest garage in the right plot, and this house is also highlighted in
+the left plot. Apparently it is not of the highest price. \label{fig:one-one}}
 
 \end{figure}
 
@@ -857,14 +862,14 @@ data is available.
 \includegraphics[height=0.4\textwidth]{images/choropleth}
 \includegraphics[height=0.4\textwidth]{images/scatter}
 
-\caption{Linked map (left) and scatterplot (right). Color shading shows
-(log) state population with darker shades indicating higher values. The
-scatterplot on the right displays the number of burglaries in 2009 versus
-the number of motor vehicle thefts by state. There is a strong correlation
-between the variables, which is mainly induced by a strong underlying
-correlation with population. Compared to other states, California displays a
-high number of motor vehicle thefts compared to the number of burglaries.
-\label{fig:linked}}
+\caption[Linked map and scatterplot]{Linked map (left) and scatterplot
+(right). Color shading shows (log) state population with darker shades
+indicating higher values. The scatterplot on the right displays the number
+of burglaries in 2009 versus the number of motor vehicle thefts by state.
+There is a strong correlation between the variables, which is mainly induced
+by a strong underlying correlation with population. Compared to other
+states, California displays a high number of motor vehicle thefts compared
+to the number of burglaries. \label{fig:linked}}
 
 \end{figure}
 
@@ -927,9 +932,10 @@ qscatter(RIDGE, NUB, data = qpollen)
 \includegraphics[width=.49\textwidth]{figure/pollen-origin}
 \includegraphics[width=.49\textwidth]{figure/pollen-zoom}
 
-\caption{Zooming into the \texttt{pollen} data. The original scatterplot
-(left) does not show anything interesting, and as we zoom into the plot, we
-see a hidden word ``EUREKA''. \label{fig:zoom}}
+\caption[Zooming into the \texttt{pollen} data]{Zooming into the \texttt
+{pollen} data. The original scatterplot (left) does not show anything
+interesting, and as we zoom into the plot, we see a hidden word ``EUREKA''.
+\label{fig:zoom}}
 
 \end{figure}
 
@@ -951,10 +957,11 @@ bin.
 \includegraphics[height=0.55\textwidth]{images/bar}
 \includegraphics[height=0.55\textwidth]{images/spine}
 
-\caption{\label{fig:bar} Bar chart (left) and spine plot (right) of the number
-of bedrooms in housing sales. Highlighted are sales of \$200k and higher.
-Querying gives details on each bin (houses with a particular number of
-bedrooms) and the selected houses with this bin.}
+\caption[Bar chart and spine plot of the number of bedrooms in housing sales]
+{Bar chart (left) and spine plot (right) of the number of bedrooms in
+housing sales. Highlighted are sales of \$200k and higher. Querying gives
+details on each bin (houses with a particular number of bedrooms) and the
+selected houses with this bin. \label{fig:bar}}
 
 \end{figure}
 
@@ -1012,7 +1019,7 @@ separation will make the system easier to maintain and extend.
 % what reactive programming enables cranvas to do and other systems cannot
 % easily do is interaction from command line besides direct manipulation
 
-\section*{Supplementary material}
+\section*{Supplementary materials}
 
 The \textbf{cranvas} package is available on GitHub at \url
 {https://github.com/ggobi/cranvas}. We have movies showing some interactions
