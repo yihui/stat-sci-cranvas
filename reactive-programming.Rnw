@@ -135,8 +135,6 @@ geographical linking \citep{dykes1998}; see \citet {hurley1988}, \citet
 implementations. We will show how linking is related to and achieved by
 reactive programming later in this paper.
 
-% TODO: Cite Graham Wills on reaction time and mention the speed of Qt
-
 A number of standalone systems for interactive statistical graphics exist.
 Early systems include PRIM-9, an interactive computer graphics system to
 picture, rotate, isolate and mask data in up to 9 dimensions \citep{prim9}.
