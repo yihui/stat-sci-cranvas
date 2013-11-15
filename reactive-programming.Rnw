@@ -125,17 +125,15 @@ Gapminder \citep{RJ2009}, ManyEyes \citep{viegas2007}, JMP \citep{jmp}, and
 D3 \citep {bostock2011d3}. That is what people usually associate with
 interactive graphics.
 
-% TODO: Jason Dykes reference
-
 Linked graphics are less common --- it allows changes across different
 displays as well as across different aggregation levels of the data. The key
 difficulty is how to let the plots be aware of each other's changes, and
 respond both automatically and immediately. There are several types of
 linking between plots, one-to-one linking, categorical linking, and
-geographical linking; see \citet {hurley1988}, \citet{stuetzle1987}, and
-\citet{mcdonald1990} for some early demonstrations and implementations. We
-will show how linking is related to and achieved by reactive programming
-later in this paper.
+geographical linking \citep{dykes1998}; see \citet {hurley1988}, \citet
+{stuetzle1987}, and \citet{mcdonald1990} for some early demonstrations and
+implementations. We will show how linking is related to and achieved by
+reactive programming later in this paper.
 
 % TODO: Cite Graham Wills on reaction time and mention the speed of Qt
 
