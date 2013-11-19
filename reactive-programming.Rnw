@@ -160,16 +160,17 @@ communicates with R through the \textbf{rJava} package.
 
 One of the big challenges in the development of interactive statistical
 applications is to resolve a user's action on the data level. This is
-sometimes referred to as the ``plumbing'' of interactive graphics. \citet
-{buja1988} introduced a structure of a viewing pipeline for dynamic scatter
-plots. Some components of the pipeline are no longer necessary, such as the
-so-called ``window-to-viewport'' transformation, because graphics toolkits
-like Qt can take care of such low-level details automatically. \citet
+sometimes referred to as the ``plumbing'' of interactive graphics. \citet[]
+[p298]{buja1988} introduced a structure of a viewing pipeline for dynamic
+scatter plots. It starts from the raw data, then transformation,
+standardization, randomization, projection, viewporting, and eventually to
+plotting. Some components of the pipeline can be made implicit, such as the
+so-called ``window-to-viewport'' transformation (i.e., viewporting), due to
+technological advances in computer graphics toolkits. For example, Qt can
+take care of such low-level details automatically. \citet
 {wickham2009plumbing} outlined a more general pipeline for interactive
 graphics, but it did not cover implementation details, which is the focus of
 this paper.
-
-% TODO: more on Buja pipeline
 
 \begin{figure}
 \includegraphics[width=\textwidth]{figure/diagram3}
