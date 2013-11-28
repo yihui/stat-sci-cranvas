@@ -358,13 +358,13 @@ reactiveModel = local({
 makeActiveBinding('reactiveBrush', reactiveModel, env = globalenv())
 @
 
-We bind a function \texttt{reactiveModel()} to the variable \texttt{reactiveBrush}
-through \texttt{makeActiveBinding()} in base R. When we assign new values
-to \texttt{reactiveBrush}, the function defined in \texttt{reactiveModel()}
-will be called: inside the function, the logical variable \texttt{b}
-is modified by the indices \texttt{i} and the view is updated accordingly.
-The two lines below achieve the same goal as the MVC example in Figure
-\ref{fig:mvc-brush}.
+We bind a function \texttt{reactiveModel()} to the object \texttt
+{reactiveBrush} through the base R function \texttt{makeActiveBinding()}.
+When we assign new values to the object \texttt{reactiveBrush}, the function
+defined in \texttt{reactiveModel()} will be called: inside the function, the
+logical variable \texttt{b} is modified by the indices \texttt{i} and the
+view is updated accordingly. The two lines below achieve the same goal as
+the MVC example in Figure \ref{fig:mvc-brush}.
 
 <<active-test, eval=FALSE>>=
 reactiveBrush=1:4 # brush the first four points
