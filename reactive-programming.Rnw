@@ -88,7 +88,7 @@ developers include the authors of this paper.
 
 Interactive graphics progresses us beyond the limitations of static
 statistical displays, in particular, for exploring high-dimensional data.
-With a static image, we can only see one aspect of the data at one time.
+With a static image, we can only see one aspect of the data at a time.
 Interactive graphics allows us to inspect data dynamically from multiple
 angles. For example, we may examine the distribution of a variable from a
 histogram, and change its bin-width on the fly without having to manually
@@ -104,7 +104,8 @@ histogram through a slider, or brush all the outliers a scatterplot using
 command line based a certain numeric criterion, which can be difficult to do
 via direct manipulation.
 
-The main tasks that an interactive graphics system should support are:
+The main tasks that an interactive statistical graphics system should
+support are:
 
 \begin{enumerate}
 
@@ -482,10 +483,10 @@ functions. For instance, we can store the axis limits in an object \texttt
 {meta} as \texttt{meta\$limits} (in the terminology of reference classes,
 \texttt{limits} is called a \emph{field} of \texttt{meta}). After the plot
 has been drawn, we are still able to modify its limits and the new limits
-will be available to the internal members of the plotting function. This is
-inconvenient, if not impossible, under the usual copy-on-modify semantics in
-R. The brushing example in Figure \ref{fig:mvc-brush} is rewritten using
-reference classes:
+will be available to the internal drawing subroutines of the plotting
+function. This is inconvenient, if not impossible, under the usual
+copy-on-modify semantics in R. The brushing example in Figure \ref
+{fig:mvc-brush} is rewritten using reference classes:
 
 <<RC-brush, eval=FALSE, tidy.opts=list(width.cutoff=60)>>=
 objBrush = setRefClass('Brush', fields = list(.brushed = 'logical', brushed = function(i) {
@@ -578,17 +579,17 @@ happens:
 
 \begin{description}
 
-\item [Direct manipulation] of graphical objects \citep{becker1987,
+\item [Direct manipulation] of graphical objects \citep{Shneiderman1983,
 wills1999} is at the heart of interactive graphics. Direct manipulation is
 what we use only for the highest level of interaction, such as selection or
 brushing of elements. With a set of different modes (querying, scaling mode
 as, for example, implemented in XGobi/GGobi), a set of different or
 additional interactions can be incorporated at the highest level. Another
-approach is to make use of visual cues \citep{unwin96, theus02}, which make
-areas of interactions visible to the user by changing the cursor upon
-entering the cue area. Visual cues are usually associated with changes to
-the resolution of a representation or scales of a display. See Figure \ref
-{fig:hist} for an example of a histogram with visual cues.
+approach is to make use of visual cues, which make areas of interactions
+visible to the user by changing the cursor upon entering the cue area.
+Visual cues are usually associated with changes to the resolution of a
+representation or scales of a display. See Figure \ref{fig:hist} for an
+example of a histogram with visual cues.
 
 \item [Input devices] such as mice or touch pads allow another level of
 interaction besides just click-selection; e.g., most operating platforms
