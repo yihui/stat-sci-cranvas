@@ -89,19 +89,19 @@ Interactive graphics progresses us beyond the limitations of static
 statistical displays, in particular, for exploring high-dimensional data.
 With a static image, we can only see one aspect of the data at one time.
 Interactive graphics allows us to inspect data dynamically from multiple
-angles. For example, we may examine the distribution of a variable from a
+views. For example, we may examine the distribution of a variable from a
 histogram, and change its bin-width on the fly without having to manually
 redraw the plot again and again according to different values of the bin-width.
 
 The term ``interactive graphics'' can be ambiguous, as disclosed by \citet
 {swayne1999} in an editorial of \textit{Computational Statistics}: it may
 imply the direct manipulation of the graph itself, manipulation of the graph
-controls, or even the command-line interaction with graphs. Nowadays we
+controls, or even the command-line interaction with graphs. We
 primarily mean the direct manipulation on graphs, but other meanings still
 have their usefulness. For instance, we may change the bin-width of a
-histogram through a slider, or brush all the outliers a scatterplot using
-command line based a certain numeric criterion, which can be difficult to do
-via direct manipulation.
+histogram through a slider, or brush all the outliers in a scatterplot using
+command line with a numeric criterion, achieving a higher degree of control 
+than direct manipulation allows.
 
 The main tasks that an interactive graphics system should support are:
 
@@ -122,18 +122,17 @@ The main tasks that an interactive graphics system should support are:
 The first set of tasks is easier to solve -- there are a lot of web
 applications that allow various single display interactions, for instance,
 Gapminder \citep{RJ2009}, ManyEyes \citep{viegas2007}, JMP \citep{jmp}, and
-D3 \citep {bostock2011d3}. That is what people usually associate with
-interactive graphics.
+D3 \citep {bostock2011d3}.
 
-Linked graphics are less common --- it allows changes across different
+Linked graphics, which is less common, allows changes across different
 displays as well as across different aggregation levels of the data. The key
 difficulty is how to let the plots be aware of each other's changes, and
 respond both automatically and immediately. There are several types of
 linking between plots, one-to-one linking, categorical linking, and
 geographical linking \citep{dykes1998}; see \citet {hurley1988}, \citet
 {stuetzle1987}, and \citet{mcdonald1990} for some early demonstrations and
-implementations. We will show how linking is related to and achieved by
-reactive programming later in this paper.
+implementations. We will show how linking is related to, and achieved by, 
+reactive programming in this paper.
 
 A number of standalone systems for interactive statistical graphics exist.
 Early systems include PRIM-9, an interactive computer graphics system to
@@ -141,14 +140,12 @@ picture, rotate, isolate and mask data in up to 9 dimensions \citep{prim9}.
 Data Desk \citep{velleman1988} and LISP-STAT \citep{tierney1990} provided
 tight integration with interactive graphics as well as numerical modeling.
 In particular, LISP-STAT is also a programmable environment like R \citep
-{R2013}, but unfortunately today R is the more popular choice. \citet
+{R2013}, but unfortunately, today R is the more popular choice. \citet
 {tierney2005} described a few desirable approaches towards programmable
 interactive graphics, which were not implemented in LISP-STAT due to
 limitations of the toolkit. These are all relatively straightforward in the
-framework of R and Qt \citep{Qt}.
-
-The software systems include XGobi and GGobi \citep{swayne2003,cook07},
-MANET \citep{unwin96} and Mondrian \citep{theus02}, which support
+framework of R and Qt \citep{Qt}. XGobi and GGobi \citep{swayne2003,cook07},
+MANET \citep{unwin96} and Mondrian \citep{theus02}, support
 interactive displays of multivariate data, but lack extensibility, and a
 tight integration with modeling in R. The \textbf{rggobi} package \citep
 {rggobi} is an interface between R and GGobi based on the GTK+ toolkit. The
@@ -161,7 +158,7 @@ communicates with R through the \textbf{rJava} package.
 One of the big challenges in the development of interactive statistical
 applications is to resolve a user's action on the data level. This is
 sometimes referred to as the ``plumbing'' of interactive graphics. \citet
-{buja1988} introduced a structure of a viewing pipeline for dynamic scatter
+{buja1988} introduced the concept of a viewing pipeline for data
 plots. Some components of the pipeline are no longer necessary, such as the
 so-called ``window-to-viewport'' transformation, because graphics toolkits
 like Qt can take care of such low-level details automatically. \citet
@@ -176,9 +173,10 @@ this paper.
 
 \caption[A representation of the pipeline in the \textbf{cranvas} package]
 {A representation of the pipeline in the \textbf{cranvas} package. It shows
-how plots are linked to each other as well as the data source. Elements are
+how plots are linked to each other as well as to the data source. Elements are
 added to the data to facilitate the interaction. Arrows with solid lines
-indicate R functions that draw the plots. \label{fig:pipeline}}
+indicate R functions that draw the plots. Dashed lines indicate reactions 
+fed back to the data elements. \label{fig:pipeline}}
 
 \end{figure}
 
