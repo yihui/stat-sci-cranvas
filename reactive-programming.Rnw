@@ -160,10 +160,10 @@ communicates with R through the \textbf{rJava} package.
 One of the big challenges in the development of interactive statistical
 applications is to resolve a user's action on the data level. This is
 sometimes referred to as the ``plumbing'' of interactive graphics. \citet[]
-[p298]{buja1988} introduced a structure of a viewing pipeline for dynamic
-scatter plots. It starts from the raw data, then transformation,
-standardization, randomization, projection, viewporting, and eventually to
-plotting. Some components of the pipeline can be made implicit, such as the
+[p298]{buja1988} introduced the concept of a viewing pipeline for data 
+plots. The pipeline takes the raw data, through transformation,
+standardization, randomization, projection, viewporting, and graphical element
+in a plot. Some components of the pipeline can be made implicit, such as the
 so-called ``window-to-viewport'' transformation (i.e., viewporting), due to
 technological advances in computer graphics toolkits. For example, Qt can
 take care of such low-level details automatically. \citet
@@ -190,16 +190,16 @@ Figure \ref {fig:pipeline} shows a basic pipeline in the \textbf{cranvas}
 package, and its most important components, mutaframes and meta data
 objects, which are ``reactive'' by design. The pipeline starts with a data
 source (a mutaframe) as the central commander of the system. Any plot can
-modify the data source as we interact with the plot, and as soon as the
+modify the data source as the user interacts with the plot, and as soon as the
 mutaframe is modified, its reactive nature will propagate the changes to all
 other plots in the system automatically. In addition, each plot also has its
-own attributes, which should not be propagated out of itself, and that is
-why we have meta data in the system besides mutaframes. A meta data object
-is also reactive, but it is only linked to a specific plot. For instance, we
-can store the bin-width of a histogram in its meta data, and when we modify
-the bin-width, the histogram will respond automatically.
+own attributes, which are described by the meta data 
+beyond the mutaframes. A meta data object
+is also reactive, but it is only linked to a specific plot. For example, 
+the bin-width of a histogram is stored in its meta data, and by the users
+actions, the histogram provokes just to respond.
 
-The paper is organized as follows. We start with the discussion of the MVC
+The paper is organized as follows. We start with a discussion of the MVC
 design. Section \ref{sec:reactive} describes the reactive programming
 paradigm relative to the MVC architecture, using \textbf{cranvas} as an
 example. Section \ref{sec:interaction} provides specific examples of how
@@ -209,14 +209,14 @@ interaction is realized.
 \section{The MVC Architecture}\label{sec:mvc}
 %==============================================================================%
 
-MVC is a software architecture design first invented by Trygve Reenskaug in
-the 1970's, and described in detail by \citet{Krasner1988}. It is widely
+MVC is a software architecture design described originally by Trygve Reenskaug in
+the 1970's, and in detail by \citet{Krasner1988}. It is widely
 used in GUI (Graphical User Interface) applications, including web
 applications \citep{leff2001web}. There have been a number of R packages
 utilizing the MVC architecture. For example, \citet{Whalen05} built an
 interactive GUI system using the MVC design to explore linked data. The GUI
-was based on the \textbf{RGtk} package (later evolved into \textbf{RGtk2}
-\citep{RGtk2}), and MVC was implemented in the \textbf{MVCClass} package.
+was based on the \textbf{RGtk} package, which later evolved into \textbf{RGtk2}
+\citep{RGtk2}, and MVC was implemented in the \textbf{MVCClass} package.
 
 The main reason for the popularity of MVC is because it minimizes the
 dependencies between different components of an application. For example,
@@ -299,6 +299,11 @@ controller = function(i) {
 }
 @
 
+
+%==============================================================================%
+\section{Reactive programming}\label{sec:reactive}
+%==============================================================================%
+
 Reactive programming is an object-oriented programming paradigm based on an
 event-listener model and targeted at the propagation of changes in data
 flows. We attach listeners on data objects such that (different) events will
@@ -306,15 +311,10 @@ be triggered corresponding to changes in data. In the above example, the
 plot will be updated as soon as the object \texttt{brushed} is modified
 without the need to explicitly call \texttt{view()}. This makes it much
 easier to express the logic of interactive graphics. We will discuss how it
-works as well as its application in \textbf{cranvas} in the next section.
+works and its application in \textbf{cranvas}.
 Shiny \citep{shiny} is another application of reactive programming in the R
 community, which makes it easy to interact between HTML elements and R, but
 it does not have a specific emphasis on statistical graphics.
-
-
-%==============================================================================%
-\section{Reactive programming}\label{sec:reactive}
-%==============================================================================%
 
 To provide interactive graphics in \textbf{cranvas}, there are two types of
 objects:
@@ -329,7 +329,7 @@ objects:
 
 \end{itemize}
 
-There are two approaches making objects reactive: \emph{mutaframes} \citep
+There are two approaches for making objects reactive: \emph{mutaframes} \citep
 {R-plumbr} for the data object, and \emph{reference classes} \citep
 {Chambers2013} for the meta data. The fundamental technique underlying them
 is the \emph{active binding} in R, thanks to the work of the R Core team (in
@@ -381,7 +381,7 @@ respectively.
 
 \subsection{Mutaframes}
 
-Mutaframes are extensions to R data frames. They are mutable, which means
+A mutaframe is an extension to the R data frame. They are mutable, which means
 that changes to its elements can be made anywhere regardless of the current
 environment. By comparison, a data frame can only be modified in the
 environment in which it was created, unless we use the non-local assignment
@@ -443,14 +443,12 @@ the plot. \label{fig:mf-plots}}
 A more complex but direct application of mutaframes is the example shown in
 the movie displayed in Figure \ref{tour}: here, we see a two dimensional
 grand tour \citep{asimov1985} through the flea dataset provided in the
-\textbf{tourr} package \citep{tourr}. After a while, we can see a separation
-of the data into three clusters (species separate into three distinct
-multivariate clusters). A two dimensional tour consists of a series of
-projections into two dimensional space. By choosing projections less than 6
-degree apart, a sense of continuity is preserved for the observer. This
+\textbf{tourr} package \citep{tourr}. A two dimensional tour consists of 
+a series of projections into two dimensional space. By choosing projections, 
+a sense of continuity is preserved for the observer. This
 continuity allows us to identify clusters as groups of points that share a
-common fate \citep[e.g.] []{wolfe2012sensation}. Internally, the movie-like
-view is upheld by repeated changes to the $X$ and $Y$ values displayed,
+common fate \citep[e.g.] []{wolfe2012sensation}. Internally, the movie
+is cheated by repeated changes to the $X$ and $Y$ values displayed in a scatterplot,
 which are propagated to the view.
 
 \begin{figure}
@@ -462,24 +460,24 @@ at \url {http://cranvas.org/examples/qtour.html}. \label{tour}}
 
 \end{figure}
 
-Interactivity of a mutaframe can be propagated to its subsets, and this
-allows us to build multiple applications based on one mutaframe and its
+Interactivity of a mutaframe can be propagated to its subsets, which
+allows multiple applications based on one mutaframe and its
 offsprings. For instance, we can select a subset of points in a scatterplot,
 obtain their indices, and use the indices to subset the original mutaframe
-to draw a new plot. The new plot is naturally connected with the original
-plot: when we interact with the new plot, the interaction will be passed to
-the original plot, and vice versa. This is similar to an earlier example
-described by \citet{hurley1988}.
+to draw a new plot. The new plot is automatically connected with the original
+plot: when we interact with the new plot, the selection will be passed to
+the mutaframe and propagated to the original plot. This is similar to an example
+described in early work by \citet{hurley1988}.
 
 \subsection{Reference classes}
 
-R introduced reference classes in version 2.12. This made it possible to
+R reference classes were introduced in R version 2.12. This made it possible to
 create objects with fields that can be accessed by reference. A consequence
 of this feature is that such objects can be used for storing meta data in
-the graphics system, and the data can be easily modified outside of plotting
+the graphics system, and the data can be modified outside of plotting
 functions. For instance, we can store the axis limits in an object \texttt
-{meta} as \texttt{meta\$limits} (in the terminology of reference classes,
-\texttt{limits} is called a \emph{field} of \texttt{meta}). After the plot
+{meta} as \texttt{meta\$limits}. In the terminology of reference classes,
+\texttt{limits} is called a \emph{field} of \texttt{meta}. After the plot
 has been drawn, we are still able to modify its limits and the new limits
 will be available to the internal drawing subroutines of the plotting
 function. This is inconvenient, if not impossible, under the usual
@@ -583,29 +581,29 @@ what we use only for the highest level of interaction, such as selection or
 brushing of elements. With a set of different modes (querying, scaling mode
 as, for example, implemented in XGobi/GGobi), a set of different or
 additional interactions can be incorporated at the highest level. Another
-approach is to make use of visual cues, which make areas of interactions
-visible to the user by changing the cursor upon entering the cue area.
+approach is to make use of visual cues, which suggest available interactions
+to the user, for example changing the cursor upon entering the cue area.
 Visual cues are usually associated with changes to the resolution of a
-representation or scales of a display. See Figure \ref{fig:hist} for an
-example of a histogram with visual cues.
+representation or scales of a display. Figure \ref{fig:hist} shows an
+example of a plot with visual cues.
 
-\item [Input devices] such as mice or touch pads allow another level of
-interaction besides just click-selection; e.g., most operating platforms
+\item [Input devices] such as a mouse or touch pad allow 
+interaction beyond click-selection. Most toolkits
 support wheel events (either through the presence of a mouse wheel, a mouse
 move with an additional modifier key, or a touch gesture), and a wheel event
 often corresponds to the zooming of a plot.
 
-\item [Keystrokes] can be used for quick access to functions that are also
-accessible through a (popup) menu or other toolbar. Figure \ref
+\item [Keystrokes] can be used as shortcuts and for quick access to functions. 
+Figure \ref
 {fig:cartogram} shows an example of a key stroke interaction (arrow keys
 \textsf{Left} and \textsf{Right}) to move between a choropleth map of the
-United States and a population based cartogram.
+United States and a population-based cartogram.
 
-\item [Functional access] through the console: Accessor functions allow us
+\item [Functional access] through the command-line: Accessor functions allow us
 to get information about the state of objects (e.g., get the indices of
 selected elements). Mutator functions enable the user to set a particular
 state for objects in a display (e.g. set highlighting color to red, set
-points to size 5). We may call this level of interaction ``indirect
+points to size 5). We call this level of interaction ``indirect
 manipulation'' of graphics.
 
 \end{description}
@@ -615,8 +613,8 @@ manipulation'' of graphics.
 \includegraphics[width=\textwidth]{images/histogram}
 
 \caption[Histogram of sales prices]{Histogram of sales prices. Sales of \$
-200k and more are selected and highlighted in yellow. Markers show cue
-regions. See \url {http://cranvas.org/examples/qhist.html} for a video of
+200k and more are selected and highlighted in yellow. Markers show visual cues. 
+See \url {http://cranvas.org/examples/qhist.html} for a video of
 the interactions. \label{fig:hist}}
 
 \end{figure}
@@ -641,19 +639,19 @@ the level of the data, but make it appear as if the user had directly
 interacted with the graphical object. This is essentially what happens in
 \textbf{cranvas} when we interact with plots.
 
-All levels of interactions mentioned above are supported in \textbf
-{cranvas}, and this package does not really discriminate direct manipulation
-from indirect manipulation. At its core, all kinds of manipulation end up as
-the manipulation of the underlying data objects, on which we elaborate in
+All levels of interaction above are supported in \textbf
+{cranvas}, and both direct manipulation and indirect manipulation 
+are available. At its core, all kinds of manipulation end up as
+changes to the underlying data objects, which is described in
 the next section.
 
 
 \subsection{Reactive data objects}\label{sec:reactive-data}
 
-The first step to create interactive plots in \textbf{cranvas} is to create
-a mutaframe, as illustrated in Figure \ref{fig:mutaframe}. The function
-\texttt{qdata()} in \textbf{cranvas} returns a mutaframe with a few more
-columns appended to a data frame. Below is a simple example:
+Figure \ref{fig:mutaframe} illustrates the first step in \textbf{cranvas}, 
+to create a mutaframe. The function
+\texttt{qdata()} in \textbf{cranvas} returns a mutaframe with additional 
+columns. Below is a simple example:
 
 \begin{figure}
 \includegraphics[width=.7\textwidth]{figure/diagram1}
@@ -681,15 +679,15 @@ qcars = qdata(cars)
 head(qcars, 4)
 @
 
-We can see the data frame \texttt{cars} was augmented by columns such as
+The data frame \texttt{cars} was augmented by columns such as
 \texttt{.brushed} and \texttt{.color}. The \texttt{.brushed} column
 indicates the brush status of graphical elements (\texttt{TRUE} means an
 element is brushed), and \texttt{.color} stores the colors of elements.
-
-It is up to a specific application how to interpret these additional
-columns. For example, it is easy to represent these attributes in scatter
-plots, because each row in the data corresponds to a point in the plot. For
-a bar chart displaying the frequencies for a categorical variable, \texttt
+It is up to a specific plot how to interpret these additional
+columns. For example, in scatter plots, because each row in the data 
+corresponds to a point in the plot, points can be colored by \texttt{.color},
+and highlighted by the logical in \texttt{.brushed}. For a bar chart,
+displaying frequencies of a categorical variable, \texttt
 {.brushed} may result in a partially or fully highlighted bar when only a
 subset in a category is brushed.
 
@@ -698,31 +696,28 @@ attaches listeners on the mutaframe at the same time. Figure \ref{fig:meta}
 shows how a scatter plot is created from a mutaframe: before the \texttt
 {qscatter()} function displays the plot, it binds the augmented columns in
 the mutaframe with the plot layers using listener functions, so that when
-these columns are updated, the plot can be updated. For example, the \texttt
-{.color} column should update the main layer of points, and \texttt
-{.brushed} column controls the brush layer. The Qt graphics framework allows
+these columns are updated, the plot can be updated. The Qt graphics framework allows
 us to build a plot using layers, which makes it possible to update one
 component of a plot without having to update all others. This gives us a lot
 of performance gain, especially when we interact with plots of large numbers
-of elements. See \url{http://cranvas.org/2013/10/qt-performance/} for an
+of elements. In \textbf{cranvas}, the \texttt{.color} column should update 
+the main layer of points, and \texttt{.brushed} column controls the brush 
+layer. See \url{http://cranvas.org/2013/10/qt-performance/} for an
 example of brushing a scatter plot of three million points, which take less
-than 0.01 second to render, and are highly responsive to the brush. Reasons
-for the great performance include Qt itself, as well as the fact that the
-\texttt{.brushed} column only updates the brush layer, and the main plot
-layer of three million points is not affected while we move the brush over
-the plot.
+than 0.01 second to render, and is highly responsive to the brush. The main 
+plot layer of three million points is not redrawn when the brush moves over
+the plot, only the brush layer.
 
-The other type of reactive data objects are called meta data in \textbf
-{cranvas}. Such objects often contain plot-specific information, such as the
-names of variables in the plot, and the axis limits, etc. See Figure \ref
-{fig:meta} again for an illustration of meta objects attached to plots. When
+The other type of reactive data objects in \textbf{cranvas} are the meta data. 
+Such objects often contain plot-specific information, such as the
+names of variables in the plot, and the axis limits, etc. When
 a plot is created, a copy of meta data is generated and associated with it.
-See \url{http://cranvas.org/examples/qscatter.html} for an example of
-zooming: what happens behind the scenes is we modify the axis limits in the
-meta data in the mouse wheel event.
+Zooming (\url{http://cranvas.org/examples/qscatter.html}) is an example. 
+Behind the scenes the axis limits are modified in the
+meta data based on the mouse wheel event.
 
-Since the data structure of meta objects is very flexible, its application
-can be very wide. The \textbf{cranvas} package allows adding or customizing
+Since the data structure of meta objects is flexible, its application
+can be broad. The \textbf{cranvas} package allows adding or customizing
 meta information to any displays. For example, the user can specify a
 function in the meta object to generate text labels when querying a plot. In
 the following text, we use \texttt{meta} to denote a meta data object.
@@ -730,21 +725,20 @@ the following text, we use \texttt{meta} to denote a meta data object.
 
 \subsection{Interactions}
 
-Now we go into further details about the interactions supported in \textbf
-{cranvas}, and explain how they are related to the reactive data objects.
+This section describes the interactions supported in \textbf
+{cranvas}, and how they are related to the reactive data objects.
 
 \subsubsection{Brushing and selection}
 
-Brushing and selection are interactions that highlight a subset of graphical
-elements in a plot. It is usually achieved by a mouse dragging a rectangle
-(or other closed shapes) over a plot, and elements inside the rectangle are
-selected. The rectangle in the brushing mode is persistent on the screen;
-for the selection mode, the rectangle is transient, meaning that it
+are interactions that highlight a subset of graphical
+elements in a plot. It is usually achieved by dragging a rectangle
+(or other closed shape) over a plot, and the elements inside the rectangle are
+selected. The rectangle, when in the brushing mode, is persistent on the screen.
+For the selection mode, the rectangle is transient, meaning that it
 disappears when the mouse is released.
 
-We use the \texttt{qscatter()} function to illustrate the basic idea. What
-really happens in \texttt{qscatter()} is too complicated to show here. We
-only show a sketch using pseudo code below:
+We use the \texttt{qscatter()} function to illustrate the basic idea. We
+show a sketch using the pseudo code below:
 
 <<qscatter-sketch, eval=FALSE>>=
 qscatter = function(x, y, data) {
@@ -760,16 +754,16 @@ qscatter = function(x, y, data) {
 
 There are two layers \texttt{layer\_main} and \texttt{layer\_brush} in the
 plot. The brush layer is used to redraw the brushed points only, so that the
-main layer can stay untouched when we brush the plot. The key for
+main layer can stay untouched when points are highlighted. The key for
 brushing/selection is the listener added to the mutaframe \texttt{data} by
-\texttt{add\_listener()} : when the column \texttt{x}, \texttt{y}, or \texttt
-{.brushed} is modified, we update the brush layer (changes in other columns
-will not affect the plot). Adding listener is denoted by the dashed arrow in
+\texttt{add\_listener()}: when the column \texttt{x}, \texttt{y}, or \texttt
+{.brushed} is modified, the brush layer is updated(changes in other columns
+will not affect the plot). Adding the listener is denoted by the dashed arrow in
 Figure \ref{fig:meta}.
 
-When we brush the plot, the points under the brush are identified by the
-mouse events in Qt, and we modify the \texttt{.brushed} variable in the
-mutaframe in R. Because of the listener associated with \texttt{.brushed},
+When the plot is brushed, the points under the brush are identified by the
+mouse events in Qt, and the \texttt{.brushed} variable in the
+mutaframe is modified. Because of the listener associated with \texttt{.brushed},
 the brush layer will be redrawn. Therefore the selection is actually handled
 with one step of backtracking: once the user draws a selection rectangle, we
 update \texttt{.brushed} immediately, which triggers the update of the brush
@@ -777,8 +771,8 @@ layer. Because this occurs in a fast pace, the user may have an illusion
 that the cursor directly selected the points. See Figure \ref{fig:one-one}
 for an example of brushing scatterplots of the Ames housing data (R code is
 provided in the next section). The selection mode was used in these plots,
-so we do not see the brush rectangle. The brushing mode was used in Figure
-\ref{fig:hist}, where there is a yellow rectangle.
+so we do not see the brush rectangle. Brushing mode was used in Figure
+\ref{fig:hist}, and the yellow rectangle illustrates brush position.
 
 In the case of a histogram, bins are the graphical objects intersecting with
 a selection rectangle. The backtracking corresponds to identifying all
@@ -795,11 +789,11 @@ internal brushing variable.
 
 Linking forms the core of communication between multiple views. By default,
 all views that involve variables from the same mutaframe are linked. Linking
-within the same dataset is implicit one-to-one linking.
+within the same dataset is implicitly one-to-one linking.
 
-We still use the mutaframe \texttt{qames} from Section \ref
-{sec:reactive-cranvas}, and create two scatterplots (Figure \ref
-{fig:one-one}), which illustrate one-to-one linking:
+Using the mutaframe \texttt{qames} from Section \ref
+{sec:reactive-cranvas}, two scatterplots are created (Figure \ref
+{fig:one-one}), and illustrate one-to-one linking:
 
 <<one-one, eval=FALSE>>=
 qscatter(livingarea, saleprice, data = qames)
@@ -816,11 +810,14 @@ the left plot. Apparently it is not of the highest price. \label{fig:one-one}}
 
 \end{figure}
 
-Recall in the previous section that when a scatterplot is created, a
+The selected property has extraordinarily large garage area, for the living 
+area, and has a below average sale price.
+
+Recall from the previous section, that when a scatterplot is created, a
 listener to update the brush layer is attached to the mutaframe. It does not
 matter where the mutaframe is modified, all the brush layers will be updated
 if the \texttt{.brushed} variable in the mutaframe is modified. When we
-interact with either of the plot, the other plot will respond to the
+interact with either of the plots, the other plot will respond to the
 changes, because both plots depend on the \texttt{.brushed} variable in the
 same mutaframe.
 
@@ -847,12 +844,12 @@ multiple data sources. In the latter case, the listener in one data object
 needs to update other data objects. In Figure \ref{fig:linked}, the map and
 the scatterplot use two different sources, and they are linked via
 categorical linking through the state names. Each state in the map is
-described by multiple locations following the border, but one state only has
+described by multiple points defining the state boundary, but each state only has
 one observation in the scatterplot. If we brush California in the
 scatterplot, the whole polygon of California (containing multiple locations)
 is highlighted. On the other hand, if we brush a part of a state in the map,
-that means the whole state should be highlighted when only the state level
-data is available.
+that means the whole state should be highlighted, which is an example of
+self-linking.
 
 
 \begin{figure}
@@ -873,8 +870,8 @@ to the number of burglaries. \label{fig:linked}}
 Linking can also be done on the same data with different aggregation levels,
 such as the raw data and binned data. The histogram in Figure \ref{fig:hist}
 shows sales prices of all houses sold in the Ames housing data. The yellow
-rectangle corresponds to an area based selection of all houses with sales of
-\$200k or more, which triggers a highlighting of all corresponding houses in
+rectangle corresponds to an area-based selection of all houses with sales of
+\$200k or more, which triggers a highlighting of corresponding houses in
 all displays of the Ames housing data. This includes the histogram itself,
 where all bins intersecting with the selection rectangle are filled with
 highlighting color, and all bar charts of the number of bedrooms as shown in
@@ -884,11 +881,11 @@ Figure \ref{fig:bar}.
 
 \subsubsection{Zooming and panning}
 
-They allow us to change or shift the scale of the view, so we can see the
-data with different granular levels. They can be resolved directly without
+change or shift the scale of the view, so we can see the
+data at different resolutions. This can be resolved directly without
 the need of interaction with the original data. In \textbf{cranvas}, the
 core of zooming and panning consists of simple changes to the meta data
-\texttt{meta\$limits}. Again, for the sake of simplicity, we show the pseudo
+\texttt{meta\$limits}. This is illustrated with the following pseudo
 code:
 
 <<meta-zoom,eval=FALSE>>=
@@ -904,18 +901,17 @@ qscatter = function(x, y, data) {
 }
 @
 
-\texttt{Scatter} is a constructor created from reference classes, and we
-store a field \texttt{limits} in \texttt{meta}. The key here is to set up
+\texttt{Scatter} is a constructor created from reference classes, containing
+a field named \texttt{limits} in \texttt{meta}. The key here is to set up
 the event \texttt{meta\$limitsChanged}: this event is triggered when \texttt
 {meta\$limits} is modified, and the axis limits of the main plot layer are
 replaced by the new value of \texttt{meta\$limits}. The \texttt{setLimits()}
 method is from Qt, which is used to set new limits on a layer, and Qt will
 update the view when the limits are changed.
 
-On the R side, we modify \texttt{meta\$limits} in the mouse wheel event for
-zooming, and in the mouse drag event for panning. We have given a video
-example of zooming into the \texttt{pollen} data in Section \ref
-{sec:reactive-data}. Figure \ref{fig:zoom} shows two screenshots of the
+In \textbf{cranvas}, \texttt{meta\$limits} is modified by the mouse wheel event
+for zooming, and by the mouse drag event for panning. 
+Figure \ref{fig:zoom} shows two screenshots of the
 original scatterplot and the zoomed version, respectively.
 
 <<pollen-zoom, eval=FALSE>>=
@@ -925,13 +921,17 @@ qpollen = qdata(pollen, size = 2)
 qscatter(RIDGE, NUB, data = qpollen)
 @
 
+A benefit of controlling the limits in this manner is that it is a local 
+property of the plot, enabling the user to examine different resolutions 
+in two different displays.
+
 \begin{figure}
 \includegraphics[width=.49\textwidth]{figure/pollen-origin}
 \includegraphics[width=.49\textwidth]{figure/pollen-zoom}
 
 \caption[Zooming into the \texttt{pollen} data]{Zooming into the \texttt
 {pollen} data. The original scatterplot (left) does not show anything
-interesting, and as we zoom into the plot, we see a hidden word ``EUREKA''.
+interesting, but as we zoom into the plot, we see a hidden word ``EUREKA''.
 \label{fig:zoom}}
 
 \end{figure}
@@ -939,16 +939,13 @@ interesting, and as we zoom into the plot, we see a hidden word ``EUREKA''.
 
 \subsubsection{Querying/identifying}
 
-It is another interaction that usually can be resolved without further
-information from the original data, although sometimes the original data may
-also be used. Querying of graphical objects involves, in a first step, the
-display of the corresponding values of the meta data. In the case of the
+is another interaction that can usually be resolved without 
+information from the original data. 
+Querying of graphical objects involves, in a first step, the
+display of the corresponding values of the meta data. For the
 bar charts in Figure \ref{fig:bar}, querying of the bins displays
 information, about the bin's level, the number of records it encompasses, as
-well as the proportion of the whole data that this bin contains. The same
-information is also displayed at the level of the selected values in the
-bar. The proportion shown is the proportion of selected elements within the
-bin.
+well as the proportion of the whole data that this bin contains.
 
 \begin{figure}
 \includegraphics[height=0.55\textwidth]{images/bar}
@@ -963,23 +960,22 @@ selected houses with this bin. \label{fig:bar}}
 \end{figure}
 
 
-\subsubsection{Direct manipulation}
+\subsubsection{Visual cues}
 
-Interactions with graphical objects: visual cues indicate additional areas
-of interaction in graphical objects other than the ones representing the
-data. Figure \ref{fig:hist} shows several examples of visual cues in a
-histogram. Both anchor point and bin-width are graphical representations of
+aid the user to learn about available interactions.
+Figure \ref{fig:hist} shows several examples of visual cues in a
+histogram. Both the anchor point and bin-width are graphical representations of
 plotting parameters for the histogram. The anchor of a histogram is the
-lower limit of the left most bin. The bin-width then defines the interval at
-which breaks are drawn to define bins. Interactions with both anchor and
-bin-width cues consist of horizontal shifts, which re-set the actual values
-parametrizing the histogram. Changes to the anchor allow to test for
+lower limit of the left most bin. The bin-width defines the interval at
+which breaks are made. Interacting with either anchor or
+bin-width cues produces horizontal shifts, which re-set the actual values
+parametrizing the histogram. Changes to the anchor allow for testing of
 instabilities in the display due to discreteness in the data. Bin-width
 changes show the data at different levels of smoothness and therefore allow
-for a visualization of `big' picture marginal distributions for large bin
+for a visualization of `big' picture marginal distributions at large bin
 widths and the investigation of small pattern features, such as multiple
-modes and gaps in the data for small bin-widths. Examples for both of these
-interactions are available as movies in the supplementary material.
+modes and gaps in the data at small bin-widths. Examples for both of these
+interactions are available as movies in the supplementary material of this paper.
 
 The visual cues in this case also correspond to meta elements. Specifically,
 the bin limits are stored in \texttt{meta\$breaks}, and the histogram layer
@@ -988,30 +984,26 @@ is connected to the \texttt{meta\$breaksChanged} event. The anchor modifies
 
 \section{Conclusions}
 
-MVC has a clear concept of the controller, and it is made implicit in
-reactive programming. In this paper, we use reactive data objects to manage
-the views. We can imagine a reactive object as a signal splitter, and we
-connect multiple devices to it. One splitter can connect to another one
-using a custom cable to build a bigger system (linking), and signals can
-flow back and forth in the system.
-
+The concept of MVC is made implicit in reactive programming. Reactive data 
+objects are used to manage the multiple views and interactions in the 
+\textbf{cranvas} package. 
 The \textbf{cranvas} package is built on graphics layers in Qt (frontend)
 and reactive data objects in R (backend). The plotting pipeline is expressed
 and attached to mutaframes as well as meta data objects. Using the reactive
 programming model, the user does not need to pay attention to the whole
 pipeline, which makes it easy to extend this system. For example,
-implementing the tour is nothing but to draw a scatterplot of the projected
-variables, and keep on modifying the data, because the mutaframe will update
+implementing the tour is simply re-drawing a scatterplot of the projected
+variables that keep changing, because the mutaframe will update
 the view automatically upon changes.
 
-The future work of \textbf{cranvas} is to include more plot types such as
-hexbin plots and scatterplot matrices, and allow users to define how the
-system reacts to changes. We still do not have a graphical user interface
-yet, and fortunately the \textbf{qtbase} package has made it easy to build
-Qt GUI's in R. Due to our adoption of the reactive programming paradigm, the
-GUI widgets can be connected to the plots via reactive data objects only.
-They do not need to know the internal structure of plots; this kind of
-separation will make the system easier to maintain and extend.
+The future work of \textbf{cranvas} involves including more plot types such as
+hexbin plots and scatterplot matrices, allowing users to define how the
+system reacts to changes and adding a GUI. 
+The \textbf{qtbase} package has made it easy to build Qt GUI's in R. The
+GUI widgets can be connected to the plots via reactive data objects.
+They do not need to know the internal structure of plots. This kind of
+modularity will make the system easier to maintain and extend than past 
+graphics software.
 
 % what reactive programming enables cranvas to do and other systems cannot
 % easily do is interaction from command line besides direct manipulation
