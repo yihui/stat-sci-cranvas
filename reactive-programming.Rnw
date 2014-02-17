@@ -19,7 +19,7 @@
 library(methods)
 library(knitr)
 options(replace.assign=TRUE, reindent.spaces=2, width=70)
-opts_chunk[['set']](error=FALSE)
+opts_chunk[['set']](error=FALSE, tidy=TRUE)
 knit_hooks$set(document=hook_movecode, par = function(before, options, envir) {
   if (before && options$fig.show != "none") {
     par(mar = c(4, 4, 0.1, 0.1), cex.lab = 0.95, cex.axis = 0.9,
@@ -39,7 +39,7 @@ set.seed(123)
 \runtitle{Reactive Programming for Interactive Graphics}
 
 \begin{aug}
-\author{Yihui Xie\ead[label=e1]{xie@iastate.edu}\ead[label=u1,url]{http://yihui.name}},
+\author{Yihui Xie\ead[label=e1]{xie@yihui.name}\ead[label=u1,url]{http://yihui.name}},
 \author{Heike Hofmann \ead[label=e2]{hofmann@iastate.edu}\ead[label=u2,url]{http://hofmann.public.iastate.edu}}
 \and
 \author{Xiaoyue Cheng\ead[label=e3]{xycheng@iastate.edu}\ead[label=u3,url]{http://xycheng.public.iastate.edu}}
@@ -63,14 +63,15 @@ modules and reflected in the output representation at a fast pace. Each
 individual module may be easy to develop and manage, but the dependency
 structure can be quite challenging. The MVC (Model/View/Controller) pattern
 is an attempt to solve the problem by separating the user's interaction from
-the representation of the data. In this paper we discuss the paradigm of {\it
-reactive programming} in the framework of the MVC architecture and show its
-applicability to interactive graphics. Under this paradigm, developers
-benefit from the separation of user interaction from the graphical
-representation, which makes it easier for users and developers to extend
-interactive applications. The implementation is done in the R package \textbf
-{cranvas}, which is freely available on GitHub and the main developers
-include the authors of this paper.
+the representation of the data. In this paper, we discuss the paradigm of
+\texttt{reactive programming} in the framework of the MVC architecture and
+show its applicability to interactive graphics. Under this paradigm,
+developers benefit from the separation of user interaction from the
+graphical representation, which makes it easier for users and developers to
+extend interactive applications. We show the central role of reactive data
+objects in an interactive graphics system, implemented as the R package
+\textbf{cranvas}, which is freely available on GitHub and the main
+developers include the authors of this paper.
 \end{abstract}
 
 \begin{keyword}
@@ -87,7 +88,7 @@ include the authors of this paper.
 
 Interactive graphics progresses us beyond the limitations of static
 statistical displays, in particular, for exploring high-dimensional data.
-With a static image, we can only see one aspect of the data at one time.
+With a static image, we can only see one aspect of the data at a time.
 Interactive graphics allows us to inspect data dynamically from multiple
 views. For example, we may examine the distribution of a variable from a
 histogram, and change its bin-width on the fly without having to manually
@@ -103,7 +104,8 @@ histogram through a slider, or brush all the outliers in a scatterplot using
 command line with a numeric criterion, achieving a higher degree of control 
 than direct manipulation allows.
 
-The main tasks that an interactive graphics system should support are:
+The main tasks that an interactive statistical graphics system should
+support are:
 
 \begin{enumerate}
 
@@ -157,16 +159,17 @@ communicates with R through the \textbf{rJava} package.
 
 One of the big challenges in the development of interactive statistical
 applications is to resolve a user's action on the data level. This is
-sometimes referred to as the ``plumbing'' of interactive graphics. \citet
-{buja1988} introduced the concept of a viewing pipeline for data
-plots. Some components of the pipeline are no longer necessary, such as the
-so-called ``window-to-viewport'' transformation, because graphics toolkits
-like Qt can take care of such low-level details automatically. \citet
+sometimes referred to as the ``plumbing'' of interactive graphics. \citet[]
+[p298]{buja1988} introduced a structure of a viewing pipeline for dynamic
+scatter plots. It starts from the raw data, then transformation,
+standardization, randomization, projection, viewporting, and eventually to
+plotting. Some components of the pipeline can be made implicit, such as the
+so-called ``window-to-viewport'' transformation (i.e., viewporting), due to
+technological advances in computer graphics toolkits. For example, Qt can
+take care of such low-level details automatically. \citet
 {wickham2009plumbing} outlined a more general pipeline for interactive
 graphics, but it did not cover implementation details, which is the focus of
 this paper.
-
-% TODO: more on Buja pipeline
 
 \begin{figure}
 \includegraphics[width=\textwidth]{figure/diagram3}
@@ -355,13 +358,13 @@ reactiveModel = local({
 makeActiveBinding('reactiveBrush', reactiveModel, env = globalenv())
 @
 
-We bind a function \texttt{reactiveModel()} to the variable \texttt{reactiveBrush}
-through \texttt{makeActiveBinding()} in base R. When we assign new values
-to \texttt{reactiveBrush}, the function defined in \texttt{reactiveModel()}
-will be called: inside the function, the logical variable \texttt{b}
-is modified by the indices \texttt{i} and the view is updated accordingly.
-The two lines below achieve the same goal as the MVC example in Figure
-\ref{fig:mvc-brush}.
+We bind a function \texttt{reactiveModel()} to the object \texttt
+{reactiveBrush} through the base R function \texttt{makeActiveBinding()}.
+When we assign new values to the object \texttt{reactiveBrush}, the function
+defined in \texttt{reactiveModel()} will be called: inside the function, the
+logical variable \texttt{b} is modified by the indices \texttt{i} and the
+view is updated accordingly. The two lines below achieve the same goal as
+the MVC example in Figure \ref{fig:mvc-brush}.
 
 <<active-test, eval=FALSE>>=
 reactiveBrush=1:4 # brush the first four points
@@ -478,10 +481,10 @@ functions. For instance, we can store the axis limits in an object \texttt
 {meta} as \texttt{meta\$limits} (in the terminology of reference classes,
 \texttt{limits} is called a \emph{field} of \texttt{meta}). After the plot
 has been drawn, we are still able to modify its limits and the new limits
-will be available to the internal members of the plotting function. This is
-inconvenient, if not impossible, under the usual copy-on-modify semantics in
-R. The brushing example in Figure \ref{fig:mvc-brush} is rewritten using
-reference classes:
+will be available to the internal drawing subroutines of the plotting
+function. This is inconvenient, if not impossible, under the usual
+copy-on-modify semantics in R. The brushing example in Figure \ref
+{fig:mvc-brush} is rewritten using reference classes:
 
 <<RC-brush, eval=FALSE, tidy.opts=list(width.cutoff=60)>>=
 objBrush = setRefClass('Brush', fields = list(.brushed = 'logical', brushed = function(i) {
@@ -574,17 +577,17 @@ happens:
 
 \begin{description}
 
-\item [Direct manipulation] of graphical objects \citep{becker1987,
+\item [Direct manipulation] of graphical objects \citep{Shneiderman1983,
 wills1999} is at the heart of interactive graphics. Direct manipulation is
 what we use only for the highest level of interaction, such as selection or
 brushing of elements. With a set of different modes (querying, scaling mode
 as, for example, implemented in XGobi/GGobi), a set of different or
 additional interactions can be incorporated at the highest level. Another
-approach is to make use of visual cues \citep{unwin96, theus02}, which make
-areas of interactions visible to the user by changing the cursor upon
-entering the cue area. Visual cues are usually associated with changes to
-the resolution of a representation or scales of a display. See Figure \ref
-{fig:hist} for an example of a histogram with visual cues.
+approach is to make use of visual cues, which make areas of interactions
+visible to the user by changing the cursor upon entering the cue area.
+Visual cues are usually associated with changes to the resolution of a
+representation or scales of a display. See Figure \ref{fig:hist} for an
+example of a histogram with visual cues.
 
 \item [Input devices] such as mice or touch pads allow another level of
 interaction besides just click-selection; e.g., most operating platforms
