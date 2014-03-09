@@ -197,11 +197,11 @@ source (a mutaframe) as the central commander of the system. Any plot can
 modify the data source as the user interacts with the plot, and as soon as the
 mutaframe is modified, its reactive nature will propagate the changes to all
 other plots in the system automatically. In addition, each plot also has its
-own attributes that are described by the metadata
-beyond the mutaframes. A metadata object
-is also reactive, but it is only linked to a specific plot. For example,
-the bin-width of a histogram is stored in its metadata, and by the user's
-actions, the histogram provokes just to respond.
+own attributes that are described by the metadata beyond the mutaframes. A
+metadata object is also reactive, but it is only linked to a specific plot.
+For example, the bin-width of a histogram is stored in its metadata, and
+when the user's action induces a change in this value, the histogram
+responds accordingly.
 
 The paper is organized as follows. We start with a discussion of the MVC
 design. Section \ref{sec:reactive} describes the reactive programming
