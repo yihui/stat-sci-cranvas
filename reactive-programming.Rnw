@@ -87,7 +87,7 @@ developers include the authors of this paper.
 %==============================================================================%
 
 Interactive graphics progresses us beyond the limitations of static
-statistical displays, in particular, for exploring high-dimensional data.
+statistical displays, in particular, for exploring multi-dimensional data.
 With a static image, we can only see one aspect of the data at a time.
 Interactive graphics allows us to inspect data dynamically from multiple
 views. For example, we may examine the distribution of a variable from a
