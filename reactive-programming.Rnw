@@ -191,10 +191,10 @@ The R package \textbf{cranvas} \citep{cranvas} is an interactive graphics
 system built under the classical Model/View/Controller (MVC) architecture
 and adopts the reactive programming paradigm to achieve interactivity.
 Figure \ref {fig:pipeline} shows a basic pipeline in the \textbf{cranvas}
-package, and its most important components, mutaframes and metadata
-objects, which are ``reactive'' by design. The pipeline starts with a data
-source (a mutaframe) as the central commander of the system. Any plot can
-modify the data source as the user interacts with the plot, and as soon as the
+package, and its most important components, mutaframes and metadata objects,
+which are ``reactive'' by design. The pipeline starts with a data source (a
+mutaframe) as the central commander of the system. Any plot can modify the
+data source as the user interacts with the plot, and as soon as the
 mutaframe is modified, its reactive nature will propagate the changes to all
 other plots in the system automatically. In addition, each plot also has its
 own attributes that are described by the metadata beyond the mutaframes. A
