@@ -64,7 +64,7 @@ individual module may be easy to develop and manage, but the dependency
 structure can be quite challenging. The MVC (Model/View/Controller) pattern
 is an attempt to solve the problem by separating the user's interaction from
 the representation of the data. In this paper, we discuss the paradigm of
-\texttt{reactive programming} in the framework of the MVC architecture and
+\emph{reactive programming} in the framework of the MVC architecture and
 show its applicability to interactive graphics. Under this paradigm,
 developers benefit from the separation of user interaction from the
 graphical representation, which makes it easier for users and developers to
@@ -464,25 +464,24 @@ at \url {http://cranvas.org/examples/qtour.html}. \label{tour}}
 
 \end{figure}
 
-<<tour-ex, eval=FALSE>>=
+<<tour-ex, eval=FALSE, tidy.opts=list(width.cutoff=55)>>=
 library(cranvas)
 library(tourr)
 qflea = qdata(flea, color = species)
 flea_tour = qtour(1:6, data = qflea, tour_path = grand_tour(3))
-
 flea_tour$start()  # start the tour
 # show a scatterplot of the first two projections
 qscatter(proj1, proj2, data = qflea, xlim = c(-.8, .8), ylim = c(-.8, .8))
 flea_tour$pause()  # pause the tour
 @
 
-Interactivity of a mutaframe can be propagated to its subsets, which
-allows multiple applications based on one mutaframe and its
-offsprings. For instance, we can select a subset of points in a scatterplot,
-obtain their indices, and use the indices to subset the original mutaframe
-to draw a new plot. The new plot is automatically connected with the original
-plot: when we interact with the new plot, the selection will be passed to
-the mutaframe and propagated to the original plot. This is similar to an example
+Interactivity of a mutaframe can be propagated to its subsets, which allows
+multiple applications based on one mutaframe and its offsprings. For
+instance, we can select a subset of points in a scatterplot, obtain their
+indices, and use the indices to subset the original mutaframe to draw a new
+plot. The new plot is then automatically connected with the original plot:
+when we interact with the new plot, the selection will be passed to the
+mutaframe and propagated to the original plot. This is similar to an example
 described in early work by \citet{hurley1988}.
 
 \subsection{Reference classes}
@@ -592,16 +591,16 @@ happens:
 \begin{description}
 
 \item [Direct manipulation] of graphical objects \citep{Shneiderman1983,
-wills1999, swayne1999} is at the heart of interactive graphics. Direct manipulation is
-what we use only for the highest level of interaction, such as selection or
-brushing of elements. With a set of different modes (querying, scaling mode
-as, for example, implemented in XGobi/GGobi), a set of different or
-additional interactions can be incorporated at the highest level. Another
-approach is to make use of visual cues, which suggest available interactions
-to the user, for example changing the cursor upon entering the cue area.
-Visual cues are usually associated with changes to the resolution of a
-representation or scales of a display. Figure \ref{fig:hist} shows an
-example of a plot with visual cues.
+swayne1999, wills1999} is at the heart of interactive graphics. Direct
+manipulation is what we use only for the highest level of interaction, such
+as selection or brushing of elements. With a set of different modes
+(querying, scaling mode as, for example, implemented in XGobi/GGobi), a set
+of different or additional interactions can be incorporated at the highest
+level. Another approach is to make use of visual cues, which suggest
+available interactions to the user, for example changing the cursor upon
+entering the cue area. Visual cues are usually associated with changes to
+the resolution of a representation or scales of a display. Figure \ref
+{fig:hist} shows an example of a plot with visual cues.
 
 \item [Input devices] such as a mouse or touch pad allow
 interaction beyond click-selection. Most toolkits
