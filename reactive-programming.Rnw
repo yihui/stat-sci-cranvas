@@ -90,9 +90,13 @@ Interactive graphics progresses us beyond the limitations of static
 statistical displays, in particular, for exploring multi-dimensional data.
 With a static image, we can only see one aspect of the data at a time.
 Interactive graphics allows us to inspect data dynamically from multiple
-views. For example, we may examine the distribution of a variable from a
-histogram, and change its bin-width on the fly without having to manually
-redraw the plot again and again according to different values of the bin-width.
+views. For example, we may draw a scatterplot of two variables, and a stacked
+bar chart showing the proportions of missing values for the rest of variables
+in a dataset (two stacked bars per variable). Then we can highlight the bar
+that indicates the missing values of one variable, and the subset of points
+corresponding to these missing values in the scatterplot are highlighted
+immediately, so we can examine the conditional bivariate relationship in the
+scatterplot.
 
 The term ``interactive graphics'' can be ambiguous, as disclosed by \citet
 {swayne1999} in an editorial of \textit{Computational Statistics}: it may
@@ -444,7 +448,7 @@ A more complex but direct application of mutaframes is the example shown in
 the movie displayed in Figure \ref{tour}: here, we see a two dimensional
 grand tour \citep{asimov1985} through the flea dataset provided in the
 \textbf{tourr} package \citep{tourr}. A two dimensional tour consists of
-a series of projections into two dimensional space. By choosing projections,
+a series of projections into two dimensional space. By choosing close consecutive projections,
 a sense of continuity is preserved for the observer. This
 continuity allows us to identify clusters as groups of points that share a
 common fate \citep[e.g.] []{wolfe2012sensation}. Internally, the movie
@@ -459,6 +463,18 @@ data. The points are separated into three clusters. Watch the video online
 at \url {http://cranvas.org/examples/qtour.html}. \label{tour}}
 
 \end{figure}
+
+<<tour-ex, eval=FALSE>>=
+library(cranvas)
+library(tourr)
+qflea = qdata(flea, color = species)
+flea_tour = qtour(1:6, data = qflea, tour_path = grand_tour(3))
+
+flea_tour$start()  # start the tour
+# show a scatterplot of the first two projections
+qscatter(proj1, proj2, data = qflea, xlim = c(-.8, .8), ylim = c(-.8, .8))
+flea_tour$pause()  # pause the tour
+@
 
 Interactivity of a mutaframe can be propagated to its subsets, which
 allows multiple applications based on one mutaframe and its
@@ -576,7 +592,7 @@ happens:
 \begin{description}
 
 \item [Direct manipulation] of graphical objects \citep{Shneiderman1983,
-wills1999} is at the heart of interactive graphics. Direct manipulation is
+wills1999, swayne1999} is at the heart of interactive graphics. Direct manipulation is
 what we use only for the highest level of interaction, such as selection or
 brushing of elements. With a set of different modes (querying, scaling mode
 as, for example, implemented in XGobi/GGobi), a set of different or
@@ -640,7 +656,7 @@ interacted with the graphical object. This is essentially what happens in
 \textbf{cranvas} when we interact with plots.
 
 All levels of interaction above are supported in \textbf
-{cranvas}, and both direct manipulation and indirect manipulation
+{cranvas}, and both direct and indirect manipulation
 are available. At its core, all kinds of manipulation end up as
 changes to the underlying data objects, which is described in
 the next section.
@@ -926,13 +942,14 @@ property of the plot, enabling the user to examine different resolutions
 in two different displays.
 
 \begin{figure}
-\includegraphics[width=.49\textwidth]{figure/pollen-origin}
-\includegraphics[width=.49\textwidth]{figure/pollen-zoom}
+\includegraphics[height=0.55\textwidth]{images/bar}
+\includegraphics[height=0.55\textwidth]{images/spine}
 
-\caption[Zooming into the \texttt{pollen} data]{Zooming into the \texttt
-{pollen} data. The original scatterplot (left) does not show anything
-interesting, but as we zoom into the plot, we see a hidden word ``EUREKA''.
-\label{fig:zoom}}
+\caption[Bar chart and spine plot of the number of bedrooms in housing sales]
+{Bar chart (left) and spine plot (right) of the number of bedrooms in
+housing sales. Highlighted are sales of \$200k and higher. Querying gives
+details on each bin (houses with a particular number of bedrooms) and the
+selected houses with this bin. \label{fig:bar}}
 
 \end{figure}
 
@@ -948,14 +965,13 @@ information, about the bin's level, the number of records it encompasses, as
 well as the proportion of the whole data that this bin contains.
 
 \begin{figure}
-\includegraphics[height=0.55\textwidth]{images/bar}
-\includegraphics[height=0.55\textwidth]{images/spine}
+\includegraphics[width=.49\textwidth]{figure/pollen-origin}
+\includegraphics[width=.49\textwidth]{figure/pollen-zoom}
 
-\caption[Bar chart and spine plot of the number of bedrooms in housing sales]
-{Bar chart (left) and spine plot (right) of the number of bedrooms in
-housing sales. Highlighted are sales of \$200k and higher. Querying gives
-details on each bin (houses with a particular number of bedrooms) and the
-selected houses with this bin. \label{fig:bar}}
+\caption[Zooming into the \texttt{pollen} data]{Zooming into the \texttt
+{pollen} data. The original scatterplot (left) does not show anything
+interesting, but as we zoom into the plot, we see a hidden word ``EUREKA''.
+\label{fig:zoom}}
 
 \end{figure}
 
@@ -987,6 +1003,7 @@ is connected to the \texttt{meta\$breaksChanged} event. The anchor modifies
 The concept of MVC is made implicit in reactive programming. Reactive data
 objects are used to manage the multiple views and interactions in the
 \textbf{cranvas} package.
+
 The \textbf{cranvas} package is built on graphics layers in Qt (frontend)
 and reactive data objects in R (backend). The plotting pipeline is expressed
 and attached to mutaframes as well as metadata objects. Using the reactive
