@@ -101,7 +101,7 @@ controls, or even the command-line interaction with graphs. We
 primarily mean the direct manipulation on graphs, but other meanings still
 have their usefulness. For instance, we may change the bin-width of a
 histogram through a slider, or brush all the outliers in a scatterplot using
-command line with a numeric criterion, achieving a higher degree of control 
+command line with a numeric criterion, achieving a higher degree of control
 than direct manipulation allows.
 
 The main tasks that an interactive statistical graphics system should
@@ -133,7 +133,7 @@ respond both automatically and immediately. There are several types of
 linking between plots, one-to-one linking, categorical linking, and
 geographical linking \citep{dykes1998}; see \citet {hurley1988}, \citet
 {stuetzle1987}, and \citet{mcdonald1990} for some early demonstrations and
-implementations. We will show how linking is related to, and achieved by, 
+implementations. We will show how linking is related to, and achieved by,
 reactive programming in this paper.
 
 A number of standalone systems for interactive statistical graphics exist.
@@ -160,7 +160,7 @@ communicates with R through the \textbf{rJava} package.
 One of the big challenges in the development of interactive statistical
 applications is to resolve a user's action on the data level. This is
 sometimes referred to as the ``plumbing'' of interactive graphics. \citet[]
-[p298]{buja1988} introduced the concept of a viewing pipeline for data 
+[p298]{buja1988} introduced the concept of a viewing pipeline for data
 plots. The pipeline takes the raw data, through transformation,
 standardization, randomization, projection, viewporting, and graphical element
 in a plot. Some components of the pipeline can be made implicit, such as the
@@ -178,7 +178,7 @@ this paper.
 {A representation of the pipeline in the \textbf{cranvas} package. It shows
 how plots are linked to each other as well as to the data source. Elements are
 added to the data to facilitate the interaction. Arrows with solid lines
-indicate R functions that draw the plots. Dashed lines indicate reactions 
+indicate R functions that draw the plots. Dashed lines indicate reactions
 fed back to the data elements. \label{fig:pipeline}}
 
 \end{figure}
@@ -187,16 +187,16 @@ The R package \textbf{cranvas} \citep{cranvas} is an interactive graphics
 system built under the classical Model/View/Controller (MVC) architecture
 and adopts the reactive programming paradigm to achieve interactivity.
 Figure \ref {fig:pipeline} shows a basic pipeline in the \textbf{cranvas}
-package, and its most important components, mutaframes and meta data
+package, and its most important components, mutaframes and metadata
 objects, which are ``reactive'' by design. The pipeline starts with a data
 source (a mutaframe) as the central commander of the system. Any plot can
 modify the data source as the user interacts with the plot, and as soon as the
 mutaframe is modified, its reactive nature will propagate the changes to all
 other plots in the system automatically. In addition, each plot also has its
-own attributes, which are described by the meta data 
-beyond the mutaframes. A meta data object
-is also reactive, but it is only linked to a specific plot. For example, 
-the bin-width of a histogram is stored in its meta data, and by the users
+own attributes that are described by the metadata
+beyond the mutaframes. A metadata object
+is also reactive, but it is only linked to a specific plot. For example,
+the bin-width of a histogram is stored in its metadata, and by the user's
 actions, the histogram provokes just to respond.
 
 The paper is organized as follows. We start with a discussion of the MVC
@@ -324,14 +324,14 @@ objects:
   \item data presented in the plots, often of a tabular form like data
   frames in R
 
-  \item meta data to store additional information of the plots such as the
+  \item metadata to store additional information of the plots such as the
   axis limits; it is irregular like a list in R
 
 \end{itemize}
 
 There are two approaches for making objects reactive: \emph{mutaframes} \citep
 {R-plumbr} for the data object, and \emph{reference classes} \citep
-{Chambers2013} for the meta data. The fundamental technique underlying them
+{Chambers2013} for the metadata. The fundamental technique underlying them
 is the \emph{active binding} in R, thanks to the work of the R Core team (in
 particular, Luke Tierney). For details, see the documentation of \texttt
 {makeActiveBinding} in R. Both mutaframes and reference classes use active
@@ -443,8 +443,8 @@ the plot. \label{fig:mf-plots}}
 A more complex but direct application of mutaframes is the example shown in
 the movie displayed in Figure \ref{tour}: here, we see a two dimensional
 grand tour \citep{asimov1985} through the flea dataset provided in the
-\textbf{tourr} package \citep{tourr}. A two dimensional tour consists of 
-a series of projections into two dimensional space. By choosing projections, 
+\textbf{tourr} package \citep{tourr}. A two dimensional tour consists of
+a series of projections into two dimensional space. By choosing projections,
 a sense of continuity is preserved for the observer. This
 continuity allows us to identify clusters as groups of points that share a
 common fate \citep[e.g.] []{wolfe2012sensation}. Internally, the movie
@@ -473,7 +473,7 @@ described in early work by \citet{hurley1988}.
 
 R reference classes were introduced in R version 2.12. This made it possible to
 create objects with fields that can be accessed by reference. A consequence
-of this feature is that such objects can be used for storing meta data in
+of this feature is that such objects can be used for storing metadata in
 the graphics system, and the data can be modified outside of plotting
 functions. For instance, we can store the axis limits in an object \texttt
 {meta} as \texttt{meta\$limits}. In the terminology of reference classes,
@@ -587,13 +587,13 @@ Visual cues are usually associated with changes to the resolution of a
 representation or scales of a display. Figure \ref{fig:hist} shows an
 example of a plot with visual cues.
 
-\item [Input devices] such as a mouse or touch pad allow 
+\item [Input devices] such as a mouse or touch pad allow
 interaction beyond click-selection. Most toolkits
 support wheel events (either through the presence of a mouse wheel, a mouse
 move with an additional modifier key, or a touch gesture), and a wheel event
 often corresponds to the zooming of a plot.
 
-\item [Keystrokes] can be used as shortcuts and for quick access to functions. 
+\item [Keystrokes] can be used as shortcuts and for quick access to functions.
 Figure \ref
 {fig:cartogram} shows an example of a key stroke interaction (arrow keys
 \textsf{Left} and \textsf{Right}) to move between a choropleth map of the
@@ -613,7 +613,7 @@ manipulation'' of graphics.
 \includegraphics[width=\textwidth]{images/histogram}
 
 \caption[Histogram of sales prices]{Histogram of sales prices. Sales of \$
-200k and more are selected and highlighted in yellow. Markers show visual cues. 
+200k and more are selected and highlighted in yellow. Markers show visual cues.
 See \url {http://cranvas.org/examples/qhist.html} for a video of
 the interactions. \label{fig:hist}}
 
@@ -640,7 +640,7 @@ interacted with the graphical object. This is essentially what happens in
 \textbf{cranvas} when we interact with plots.
 
 All levels of interaction above are supported in \textbf
-{cranvas}, and both direct manipulation and indirect manipulation 
+{cranvas}, and both direct manipulation and indirect manipulation
 are available. At its core, all kinds of manipulation end up as
 changes to the underlying data objects, which is described in
 the next section.
@@ -648,9 +648,9 @@ the next section.
 
 \subsection{Reactive data objects}\label{sec:reactive-data}
 
-Figure \ref{fig:mutaframe} illustrates the first step in \textbf{cranvas}, 
+Figure \ref{fig:mutaframe} illustrates the first step in \textbf{cranvas},
 to create a mutaframe. The function
-\texttt{qdata()} in \textbf{cranvas} returns a mutaframe with additional 
+\texttt{qdata()} in \textbf{cranvas} returns a mutaframe with additional
 columns. Below is a simple example:
 
 \begin{figure}
@@ -684,7 +684,7 @@ The data frame \texttt{cars} was augmented by columns such as
 indicates the brush status of graphical elements (\texttt{TRUE} means an
 element is brushed), and \texttt{.color} stores the colors of elements.
 It is up to a specific plot how to interpret these additional
-columns. For example, in scatter plots, because each row in the data 
+columns. For example, in scatter plots, because each row in the data
 corresponds to a point in the plot, points can be colored by \texttt{.color},
 and highlighted by the logical in \texttt{.brushed}. For a bar chart,
 displaying frequencies of a categorical variable, \texttt
@@ -700,27 +700,27 @@ these columns are updated, the plot can be updated. The Qt graphics framework al
 us to build a plot using layers, which makes it possible to update one
 component of a plot without having to update all others. This gives us a lot
 of performance gain, especially when we interact with plots of large numbers
-of elements. In \textbf{cranvas}, the \texttt{.color} column should update 
-the main layer of points, and \texttt{.brushed} column controls the brush 
+of elements. In \textbf{cranvas}, the \texttt{.color} column should update
+the main layer of points, and \texttt{.brushed} column controls the brush
 layer. See \url{http://cranvas.org/2013/10/qt-performance/} for an
 example of brushing a scatter plot of three million points, which take less
-than 0.01 second to render, and is highly responsive to the brush. The main 
+than 0.01 second to render, and is highly responsive to the brush. The main
 plot layer of three million points is not redrawn when the brush moves over
 the plot, only the brush layer.
 
-The other type of reactive data objects in \textbf{cranvas} are the meta data. 
+The other type of reactive data objects in \textbf{cranvas} are the metadata.
 Such objects often contain plot-specific information, such as the
 names of variables in the plot, and the axis limits, etc. When
-a plot is created, a copy of meta data is generated and associated with it.
-Zooming (\url{http://cranvas.org/examples/qscatter.html}) is an example. 
+a plot is created, a copy of metadata is generated and associated with it.
+Zooming (\url{http://cranvas.org/examples/qscatter.html}) is an example.
 Behind the scenes the axis limits are modified in the
-meta data based on the mouse wheel event.
+metadata based on the mouse wheel event.
 
 Since the data structure of meta objects is flexible, its application
 can be broad. The \textbf{cranvas} package allows adding or customizing
 meta information to any displays. For example, the user can specify a
 function in the meta object to generate text labels when querying a plot. In
-the following text, we use \texttt{meta} to denote a meta data object.
+the following text, we use \texttt{meta} to denote a metadata object.
 
 
 \subsection{Interactions}
@@ -810,7 +810,7 @@ the left plot. Apparently it is not of the highest price. \label{fig:one-one}}
 
 \end{figure}
 
-The selected property has extraordinarily large garage area, for the living 
+The selected property has extraordinarily large garage area, for the living
 area, and has a below average sale price.
 
 Recall from the previous section, that when a scatterplot is created, a
@@ -884,7 +884,7 @@ Figure \ref{fig:bar}.
 change or shift the scale of the view, so we can see the
 data at different resolutions. This can be resolved directly without
 the need of interaction with the original data. In \textbf{cranvas}, the
-core of zooming and panning consists of simple changes to the meta data
+core of zooming and panning consists of simple changes to the metadata
 \texttt{meta\$limits}. This is illustrated with the following pseudo
 code:
 
@@ -910,7 +910,7 @@ method is from Qt, which is used to set new limits on a layer, and Qt will
 update the view when the limits are changed.
 
 In \textbf{cranvas}, \texttt{meta\$limits} is modified by the mouse wheel event
-for zooming, and by the mouse drag event for panning. 
+for zooming, and by the mouse drag event for panning.
 Figure \ref{fig:zoom} shows two screenshots of the
 original scatterplot and the zoomed version, respectively.
 
@@ -921,8 +921,8 @@ qpollen = qdata(pollen, size = 2)
 qscatter(RIDGE, NUB, data = qpollen)
 @
 
-A benefit of controlling the limits in this manner is that it is a local 
-property of the plot, enabling the user to examine different resolutions 
+A benefit of controlling the limits in this manner is that it is a local
+property of the plot, enabling the user to examine different resolutions
 in two different displays.
 
 \begin{figure}
@@ -939,10 +939,10 @@ interesting, but as we zoom into the plot, we see a hidden word ``EUREKA''.
 
 \subsubsection{Querying/identifying}
 
-is another interaction that can usually be resolved without 
-information from the original data. 
+is another interaction that can usually be resolved without
+information from the original data.
 Querying of graphical objects involves, in a first step, the
-display of the corresponding values of the meta data. For the
+display of the corresponding values of the metadata. For the
 bar charts in Figure \ref{fig:bar}, querying of the bins displays
 information, about the bin's level, the number of records it encompasses, as
 well as the proportion of the whole data that this bin contains.
@@ -984,12 +984,12 @@ is connected to the \texttt{meta\$breaksChanged} event. The anchor modifies
 
 \section{Conclusions}
 
-The concept of MVC is made implicit in reactive programming. Reactive data 
-objects are used to manage the multiple views and interactions in the 
-\textbf{cranvas} package. 
+The concept of MVC is made implicit in reactive programming. Reactive data
+objects are used to manage the multiple views and interactions in the
+\textbf{cranvas} package.
 The \textbf{cranvas} package is built on graphics layers in Qt (frontend)
 and reactive data objects in R (backend). The plotting pipeline is expressed
-and attached to mutaframes as well as meta data objects. Using the reactive
+and attached to mutaframes as well as metadata objects. Using the reactive
 programming model, the user does not need to pay attention to the whole
 pipeline, which makes it easy to extend this system. For example,
 implementing the tour is simply re-drawing a scatterplot of the projected
@@ -998,11 +998,11 @@ the view automatically upon changes.
 
 The future work of \textbf{cranvas} involves including more plot types such as
 hexbin plots and scatterplot matrices, allowing users to define how the
-system reacts to changes and adding a GUI. 
+system reacts to changes and adding a GUI.
 The \textbf{qtbase} package has made it easy to build Qt GUI's in R. The
 GUI widgets can be connected to the plots via reactive data objects.
 They do not need to know the internal structure of plots. This kind of
-modularity will make the system easier to maintain and extend than past 
+modularity will make the system easier to maintain and extend than past
 graphics software.
 
 % what reactive programming enables cranvas to do and other systems cannot
