@@ -39,7 +39,7 @@ set.seed(123)
 \runtitle{Reactive Programming for Interactive Graphics}
 
 \begin{aug}
-\author{Yihui Xie\ead[label=e1]{xie@yihui.name}\ead[label=u1,url]{http://yihui.name}},
+\author{Yihui Xie\thanks{Corresponding author.}\ead[label=e1]{xie@yihui.name}\ead[label=u1,url]{http://yihui.name}},
 \author{Heike Hofmann \ead[label=e2]{hofmann@iastate.edu}\ead[label=u2,url]{http://hofmann.public.iastate.edu}}
 \and
 \author{Xiaoyue Cheng\ead[label=e3]{xycheng@iastate.edu}\ead[label=u3,url]{http://xycheng.public.iastate.edu}}
